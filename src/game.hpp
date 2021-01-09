@@ -2,10 +2,10 @@
 #define _THE_GAME_HPP
 
 #include <memory>
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_ttf.h"
-#include "glm/glm.hpp"
+#include "graphicshdr.hpp"
+
+#include "entitymanager.hpp"
+
 
 class Game
 {
@@ -17,7 +17,9 @@ class Game
          void processInput ();
          void update();
          void render();
-         void destroy();       
+         void destroy();
+
+         void loadLevel (int level);
          bool isRunning() const { return m_isrunning; }
     
     
@@ -30,6 +32,7 @@ class Game
         glm::vec2 projectileVelocity;
         uint32_t ticklastframe;
 
+        std::unique_ptr <Entitymanager> m_entityManager; 
         
 };
 

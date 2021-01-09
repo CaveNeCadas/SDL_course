@@ -50,6 +50,8 @@ void Game::initialize(int32_t width, int32_t height)
         return;
     }
 
+    m_entityManager = std::make_unique<Entitymanager> ( m_renderer );
+
     m_isrunning = true;
 }
 
@@ -76,25 +78,25 @@ void Game::processInput ()
 
 void Game::update()
 {
+    auto newTick = SDL_GetTicks();
     //wait until 16ms has elapsed since last frame
-    auto time2Wait =  FRAME_TARGET_TIME - (SDL_GetTicks() - ticklastframe );
+    auto time2Wait =  FRAME_TARGET_TIME - (  newTick - ticklastframe );
     if (time2Wait > 0 && time2Wait <= FRAME_TARGET_TIME )
     {
         SDL_Delay (time2Wait);
     }
  
+     
     //delta time is diff from last frame converted in seconds
-    float deltaTime = ( SDL_GetTicks() - ticklastframe )/ 1000.f;
+    float deltaTime = ( newTick - ticklastframe )/ 1000.f;
 
-    ticklastframe =   SDL_GetTicks() ; // ticks since SDL_init;
+    ticklastframe =   newTick ; // ticks since SDL_init;
 
     //clamp the value of delta time in case it's bigger than a max value
     
     deltaTime = ( deltaTime > 0.05f)? 0.05f: deltaTime;
 
-    projectilePosition =  glm::vec2 ( projectilePosition.x + projectileVelocity.x  * deltaTime ,
-                                      projectilePosition.y + projectileVelocity.y  * deltaTime 
-                                     ); // how many pixel / second
+    m_entityManager->update(deltaTime);
     
 }
 
@@ -103,10 +105,12 @@ void Game::render()
     SDL_SetRenderDrawColor ( m_renderer, 0,0,15, 255 );
     SDL_RenderClear(m_renderer);
 
-    SDL_Rect projectile {  (int)projectilePosition.x, (int)projectilePosition.y, 10, 10 };
+    m_entityManager->render();
 
-    SDL_SetRenderDrawColor ( m_renderer, 255,255,255, 255 );
-    SDL_RenderFillRect ( m_renderer, &projectile );
+    // SDL_Rect projectile {  (int)projectilePosition.x, (int)projectilePosition.y, 10, 10 };
+
+    // SDL_SetRenderDrawColor ( m_renderer, 255,255,255, 255 );
+    // SDL_RenderFillRect ( m_renderer, &projectile );
 
     SDL_RenderPresent (m_renderer);
     
@@ -117,4 +121,9 @@ void Game::destroy()
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow (m_mainWindow);
     SDL_Quit();
+}
+
+void Game::loadLevel (int level)
+{
+
 }
