@@ -1,7 +1,7 @@
 # SDL_course
 
 
-##Dependencies
+## Dependencies
 
 * SDL
 * Lua
