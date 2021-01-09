@@ -1,9 +1,9 @@
 # SDL_course
 
 
-Dependencies
+##Dependencies
 
-SDL
-Lua
-glm
-spdlog
+* SDL
+* Lua
+* glm
+* spdlog
