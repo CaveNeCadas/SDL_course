@@ -15,6 +15,8 @@ int main ()
 
     game -> initialize (WINDOW_WIDTH, WINDOW_HEIGHT );
 
+    game -> loadLevel(0);
+    
     while (game->isRunning())
     {
         game -> processInput();

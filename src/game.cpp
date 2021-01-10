@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "spdlog/spdlog.h"
 #include "constants.hpp"
+#include "components/transformComponent.hpp"
 
 Game::Game ()
 : m_isrunning{false}
@@ -100,6 +101,14 @@ void Game::update()
     
 }
 
+void Game::loadLevel (int level)
+{
+    auto newent = m_entityManager->addEntity ("projectile");
+
+    newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);
+}
+
+
 void Game::render()
 {
     SDL_SetRenderDrawColor ( m_renderer, 0,0,15, 255 );
@@ -123,7 +132,3 @@ void Game::destroy()
     SDL_Quit();
 }
 
-void Game::loadLevel (int level)
-{
-
-}

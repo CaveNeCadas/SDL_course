@@ -14,35 +14,32 @@ class TransformComponent : public Component
         int32_t m_scale;
     public:
 
-        TransformComponent( int posx, int posy, in velx, int vely, int w, int h, int sca)
-        : m_position(posx, posy)
-        , m_velocity (velx, vely)
-        , m_width (w)
-        , m_width (y)
-        , m_width (s)
-        {
-
-        }   
+        TransformComponent( Entity* owner, int posx, int posy, int velx, int vely, int w, int h, int sca)
+        : Component(owner)
+        , m_position(posx, posy)
+        , m_velocity(velx, vely)
+        , m_width(w)
+        , m_height(h)
+        , m_scale(sca)
+        {/*NOP*/}   
 
         void initialize () override 
-        {
-
-        }
+        {/*NOP*/}
         
         void update (float deltaTime) override
         {
-            m_position = glm::vec2 (  m_position.x, m_position.x * deltaTime, m_position.y, m_position.y * deltaTime );
-        }
+            m_position = glm::vec2 ( m_position.x + m_velocity.x * deltaTime
+                                   , m_position.y + m_velocity.y * deltaTime 
+                                   );
+                                   
+        } 
 
-        void render(  SDL_Renderer * renderer ) override
+        void render(  SDL_Renderer * a_renderer ) override
         {
             SDL_Rect transformRect = { (int32_t)m_position.x, (int32_t)m_position.y, m_width, m_height  };
-            SDL_SetRenderDrawColor ( m_renderer, 255,0,15, 255 );
-            SDL_RenderClear(m_renderer);
-            SDL_RenderFillRect ( m_renderer, &projectile );
+            SDL_SetRenderDrawColor ( a_renderer, 255,255,255, 255 );
+            SDL_RenderFillRect ( a_renderer, &transformRect );
         }
-
-}
-
+};
 
 #endif

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <map>
 
 #include "graphicshdr.hpp"
 
@@ -18,7 +19,8 @@ class Entity
         Entitymanager* m_manager;
         bool m_isActive;
         std::string m_name;
-        std::vector<Component *> m_compponents;
+        std::vector< std::unique_ptr< Component > > m_compponents;
+        std::map<const std::type_info*, Component*> m_componentTypeMap;
 
     public:
 
@@ -28,6 +30,21 @@ class Entity
         void render();
         void destroy();
         bool isActive () const { return m_isActive; }
+
+    public:    
+
+        template <typename T, typename ... CArgs>
+        void addComponent ( CArgs&&... args )
+        {
+            m_compponents.push_back ( std::make_unique<T>( this, std::forward<CArgs>(args)... ) );
+            m_componentTypeMap[&typeid(T)] = m_compponents.back().get();
+        }
+
+        template <typename T>
+        T* getComponent() 
+        {
+            return static_cast<T*>( m_componentTypeMap[ &typeid(T) ] );
+        }
 };
 
 

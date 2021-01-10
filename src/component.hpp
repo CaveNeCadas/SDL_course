@@ -14,8 +14,8 @@ class Component
 
     public:
 
-        explicit Component();
-        virtual ~Component();
+        explicit Component(Entity* owner):m_owner(owner){}
+        virtual ~Component(){}
         virtual void initialize () = 0 ;
         virtual void update (float deltaTime) = 0;
         virtual void render(  SDL_Renderer * ) = 0;
