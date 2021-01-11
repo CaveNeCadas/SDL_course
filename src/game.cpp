@@ -120,11 +120,9 @@ void Game::loadLevel (int level)
     chopent->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
     chopent->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
     
-    
     auto radarent = m_entityManager->addEntity ("radarentity");
     radarent->addComponent<TransformComponent>( 340,400,0,0,64,64,1);
     radarent->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
-    
     
     m_entityManager->initialize();
 }

@@ -42,7 +42,7 @@ class TransformComponent : public Component
         }
 
         int32_t getWidth() const { return m_width;} 
-        int32_t getHeight() const { return m_height;} 
+        int32_t getHeight() const { return m_height;}
         int32_t getScale() const { return m_scale;} 
 
         glm::vec2 const &  getPosition() const {  return m_position; }
@@ -50,14 +50,11 @@ class TransformComponent : public Component
 
         glm::vec2 &  getVelocity() {  return m_velocity; }
 
-
         void  updateVelocity( int32_t x, int32_t y) 
         {  
             m_velocity.x = x; 
             m_velocity.y = y; 
         }
-
-
 };
 
 #endif
