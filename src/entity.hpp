@@ -27,6 +27,7 @@ class Entity
         Entity(Entitymanager* manager, std::string name);
         virtual ~Entity();
         void update (float deltaTime);
+        void initialize();
         void render();
         void destroy();
         bool isActive () const { return m_isActive; }

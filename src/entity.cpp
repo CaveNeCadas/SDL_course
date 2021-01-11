@@ -17,6 +17,14 @@ Entity::~Entity()
 
 }
 
+void Entity::initialize()
+{
+    for (auto & comp : m_compponents)
+    {
+        comp-> initialize ();
+    }
+}
+
 void Entity::update (float deltaTime)
 {
     for (auto & comp : m_compponents)

@@ -1,5 +1,6 @@
 #include "assetmanager.hpp"
 #include "texturemanager.hpp"
+#include "spdlog/spdlog.h"
 
 
 AssetManager::AssetManager ( Entitymanager* entmngr, SDL_Renderer * a_renderer)
@@ -23,6 +24,6 @@ void AssetManager::addTexture (std::string textId, char const * filename)
 }
 
 SDL_Texture* AssetManager::getTexture(std::string const & tid) 
-{
+{   
     return m_textures[tid];
 }

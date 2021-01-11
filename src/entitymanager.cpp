@@ -12,6 +12,15 @@ Entitymanager::~Entitymanager()
 {
 
 }
+
+void Entitymanager::initialize()
+{
+    for (auto & ent : m_entities)
+    {
+        ent-> initialize();
+    }
+}
+
 void Entitymanager::update (float deltaTime)
 {
     for (auto & ent : m_entities)

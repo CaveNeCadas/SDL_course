@@ -5,6 +5,7 @@
 #include "graphicshdr.hpp"
 
 #include "entitymanager.hpp"
+#include "assetmanager.hpp"
 
 
 class Game
@@ -32,8 +33,8 @@ class Game
         glm::vec2 projectileVelocity;
         uint32_t ticklastframe;
 
-        std::unique_ptr <Entitymanager> m_entityManager; 
-        
+        std::unique_ptr < Entitymanager > m_entityManager; 
+        std::unique_ptr < AssetManager  > m_assetmanager;
 };
 
 using game_ptr = std::unique_ptr<Game>;

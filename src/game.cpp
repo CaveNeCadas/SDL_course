@@ -2,8 +2,10 @@
 #include "spdlog/spdlog.h"
 #include "constants.hpp"
 #include "components/transformComponent.hpp"
+#include "components/spritecomponent.hpp"
 
-Game::Game ()
+
+ Game::Game ()
 : m_isrunning{false}
 , m_mainWindow{nullptr}
 , m_renderer{nullptr}
@@ -51,8 +53,8 @@ void Game::initialize(int32_t width, int32_t height)
         return;
     }
 
-    m_entityManager = std::make_unique<Entitymanager> ( m_renderer );
-
+    m_entityManager = std::make_unique < Entitymanager> ( m_renderer );
+    m_assetmanager  = std::make_unique < AssetManager > ( m_entityManager.get(), m_renderer );
     m_isrunning = true;
 }
 
@@ -103,9 +105,17 @@ void Game::update()
 
 void Game::loadLevel (int level)
 {
+
+    std::string texturepath("./assets/images/tank-big-right.png");
+
+    m_assetmanager->addTexture ("tank-image", texturepath.c_str());
+
     auto newent = m_entityManager->addEntity ("projectile");
 
     newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);
+    newent->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
+
+    m_entityManager->initialize();
 }
 
 
@@ -116,11 +126,7 @@ void Game::render()
 
     m_entityManager->render();
 
-    // SDL_Rect projectile {  (int)projectilePosition.x, (int)projectilePosition.y, 10, 10 };
-
-    // SDL_SetRenderDrawColor ( m_renderer, 255,255,255, 255 );
-    // SDL_RenderFillRect ( m_renderer, &projectile );
-
+   
     SDL_RenderPresent (m_renderer);
     
 }

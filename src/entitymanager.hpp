@@ -21,6 +21,7 @@ class Entitymanager
 
         explicit Entitymanager(  SDL_Renderer * renderer );
         virtual ~Entitymanager();
+        void initialize();
         void update (float deltaTime);
         void render();
         void clear();

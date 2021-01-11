@@ -37,9 +37,16 @@ class TransformComponent : public Component
         void render(  SDL_Renderer * a_renderer ) override
         {
             SDL_Rect transformRect = { (int32_t)m_position.x, (int32_t)m_position.y, m_width, m_height  };
-            SDL_SetRenderDrawColor ( a_renderer, 255,255,255, 255 );
+           // SDL_SetRenderDrawColor ( a_renderer, 0,0,16, 1 );
             SDL_RenderFillRect ( a_renderer, &transformRect );
         }
+
+        int32_t getWidth() const { return m_width;} 
+        int32_t getHeight() const { return m_height;} 
+        int32_t getScale() const { return m_scale;} 
+
+        glm::vec2 const &  getPosition() const {  return m_position; }
+        glm::vec2 const &  getVelocity() const {  return m_velocity; };        
 };
 
 #endif

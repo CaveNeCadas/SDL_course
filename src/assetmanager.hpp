@@ -18,7 +18,6 @@ class AssetManager
         void clear();
         void addTexture (std::string textId, char const * filename);
         SDL_Texture* getTexture( std::string const & tid );
-
 };
 
 

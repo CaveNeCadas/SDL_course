@@ -5,10 +5,13 @@
 #include "graphicshdr.hpp"
 #include "component.hpp"
 #include "texturemanager.hpp"
+#include "transformComponent.hpp"
+#include "assetmanager.hpp"
 
 class SpriteComponent : public Component
 {
     private:
+    TransformComponent* m_transformComponent;
         SDL_Texture * m_texture;
         SDL_Rect m_src_rect;
         SDL_Rect m_dst_rect;
@@ -16,28 +19,45 @@ class SpriteComponent : public Component
 
    public:
 
-        SpriteComponent( Entity* owner, char const * filepath )
+        SpriteComponent( Entity* owner, AssetManager*astmngr,  std::string const & texId )
         : Component(owner)
+        , m_transformComponent{nullptr}
         , m_texture( nullptr )
         , m_src_rect{0,0,0,0}
         , m_dst_rect{0,0,0,0}
         , m_flip{SDL_FLIP_NONE}
-        {/*NOP*/}   
+        {/*NOP*/
+            setTexture (astmngr, texId);        
+        }   
 
-        void setTexture (  std::string const & texId )
+        void setTexture ( AssetManager*astmngr,  std::string const & texId )
+        {
+                m_texture = astmngr->getTexture (texId);
+        }
 
         void initialize () override 
-        {/*NOP*/}
+        {
+          //  spdlog::info ("initialize");
+            m_transformComponent = m_owner->getComponent<TransformComponent>();
+            m_src_rect.x = 0;
+            m_src_rect.y = 0;
+            m_src_rect.w = m_transformComponent->getWidth();
+            m_src_rect.h = m_transformComponent->getHeight();
+        }
         
         void update (float deltaTime) override
-        {                          
+        {
+           // spdlog::info ("update");
+            m_dst_rect.x = m_transformComponent->getPosition().x;
+            m_dst_rect.y = m_transformComponent->getPosition().y;
+            m_dst_rect.w = m_transformComponent->getWidth() * m_transformComponent->getScale();
+            m_dst_rect.h = m_transformComponent->getHeight()* m_transformComponent->getScale();        
         } 
 
         void render(  SDL_Renderer * a_renderer ) override
         {
-            SDL_Rect transformRect = { (int32_t)m_position.x, (int32_t)m_position.y, m_width, m_height  };
-            SDL_SetRenderDrawColor ( a_renderer, 255,255,255, 255 );
-            SDL_RenderFillRect ( a_renderer, &transformRect );
+            //spdlog::info ("draw");
+            TextureManager::draw ( m_texture, m_src_rect, m_dst_rect, m_flip , a_renderer);
         }
 };
 

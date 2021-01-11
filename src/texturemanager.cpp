@@ -6,7 +6,6 @@ SDL_Texture* TextureManager::loadTexture (char const * filename, SDL_Renderer * 
     SDL_Surface * surface = IMG_Load (filename);
     SDL_Texture * texture = SDL_CreateTextureFromSurface ( a_renderer,surface);
     SDL_FreeSurface (surface);
-
     return texture;
 
 }
