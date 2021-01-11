@@ -110,6 +110,10 @@ void Game::loadLevel (int level)
     m_assetmanager->addTexture ("tank-image", "./assets/images/tank-big-right.png" );
     m_assetmanager->addTexture ("chopper-image", "./assets/images/chopper-spritesheet.png" );
     m_assetmanager->addTexture ("radar-image", "./assets/images/radar.png" );
+    m_assetmanager->addTexture ("map-image", "./assets/tilemaps/jungle.png" );
+
+    m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture("map-image"), 1,32  );
+    m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25,20 );
 
     auto newent = m_entityManager->addEntity ("projectile");
     newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);

@@ -6,6 +6,7 @@
 
 #include "entitymanager.hpp"
 #include "assetmanager.hpp"
+#include "map.hpp"
 
 
 class Game
@@ -36,6 +37,8 @@ class Game
 
         std::unique_ptr < Entitymanager > m_entityManager; 
         std::unique_ptr < AssetManager  > m_assetmanager;
+
+        std::unique_ptr <Map>  m_gameMap;
 };
 
 using game_ptr = std::unique_ptr<Game>;
