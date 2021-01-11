@@ -3,6 +3,8 @@
 #include "constants.hpp"
 #include "components/transformComponent.hpp"
 #include "components/spritecomponent.hpp"
+#include "components/keyboardcontrol.hpp"
+
 
 
  Game::Game ()
@@ -61,17 +63,17 @@ void Game::initialize(int32_t width, int32_t height)
 void Game::processInput ()
 {
 
-    SDL_Event event;
-    SDL_PollEvent (&event);
+    
+    SDL_PollEvent (&m_event);
 
-    switch ( event.type ) 
+    switch ( m_event.type ) 
     {
     case SDL_QUIT:
         m_isrunning = false;
         break;
     
     case SDL_KEYDOWN:
-        m_isrunning = !( event.key.keysym.sym == SDLK_ESCAPE)  ;
+        m_isrunning = !( m_event.key.keysym.sym == SDLK_ESCAPE)  ;
         break;
     default:
         break;
@@ -105,19 +107,27 @@ void Game::update()
 
 void Game::loadLevel (int level)
 {
-
-    std::string texturepath("./assets/images/tank-big-right.png");
-
-    m_assetmanager->addTexture ("tank-image", texturepath.c_str());
+    m_assetmanager->addTexture ("tank-image", "./assets/images/tank-big-right.png" );
+    m_assetmanager->addTexture ("chopper-image", "./assets/images/chopper-spritesheet.png" );
+    m_assetmanager->addTexture ("radar-image", "./assets/images/radar.png" );
 
     auto newent = m_entityManager->addEntity ("projectile");
-
     newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);
     newent->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
-
+    
+    auto chopent = m_entityManager->addEntity ("chooperentity");
+    chopent->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
+    chopent->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
+    chopent->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
+    
+    
+    auto radarent = m_entityManager->addEntity ("radarentity");
+    radarent->addComponent<TransformComponent>( 340,400,0,0,64,64,1);
+    radarent->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
+    
+    
     m_entityManager->initialize();
 }
-
 
 void Game::render()
 {

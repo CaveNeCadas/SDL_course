@@ -28,6 +28,7 @@ class Game
         bool m_isrunning;
         SDL_Window* m_mainWindow;
         SDL_Renderer * m_renderer;
+        SDL_Event m_event;
 
         glm::vec2 projectilePosition;
         glm::vec2 projectileVelocity;
