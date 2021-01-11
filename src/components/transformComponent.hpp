@@ -36,9 +36,9 @@ class TransformComponent : public Component
 
         void render(  SDL_Renderer * a_renderer ) override
         {
-            SDL_Rect transformRect = { (int32_t)m_position.x, (int32_t)m_position.y, m_width, m_height  };
+           // SDL_Rect transformRect = { (int32_t)m_position.x, (int32_t)m_position.y, m_width, m_height  };
            // SDL_SetRenderDrawColor ( a_renderer, 0,0,16, 1 );
-            SDL_RenderFillRect ( a_renderer, &transformRect );
+           // SDL_RenderFillRect ( a_renderer, &transformRect );
         }
 
         int32_t getWidth() const { return m_width;} 
