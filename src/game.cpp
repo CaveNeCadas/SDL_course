@@ -166,7 +166,7 @@ void Game::handleCameraMovement()
             Game::s_camera.y = Game::s_camera.y < 0 ? 0 : Game::s_camera.y;
             
             Game::s_camera.x = Game::s_camera.x > Game::s_camera.w ? Game::s_camera.w : Game::s_camera.x;
-            Game::s_camera.y = Game::s_camera.y > Game::s_camera.h ? Game::s_camera.h : Game::s_camera.h;
+            Game::s_camera.y = Game::s_camera.y > Game::s_camera.h ? Game::s_camera.h : Game::s_camera.y;
 
 
         }
