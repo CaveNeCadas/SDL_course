@@ -49,11 +49,21 @@ class Entity
         {
             return static_cast<T*>( m_componentTypeMap[ &typeid(T) ] );
         }
+
+
+        template <typename T>
+        bool hasComponent() 
+        {
+            return   m_componentTypeMap.end() != m_componentTypeMap.find(&typeid(T)); 
+        }
 };
 
 using entity_ptr_t = std::unique_ptr< Entity >;
 
- auto const entity_cmp = [](entity_ptr_t  & left, entity_ptr_t  & right) { return static_cast< std::underlying_type<LayerType>::type >( left->getLayer() ) < 
-                                                                                static_cast< std::underlying_type<LayerType>::type >( right->getLayer() ); };
+ auto const entity_cmp = [](entity_ptr_t  & left, entity_ptr_t  & right) 
+                            { 
+                                return static_cast< std::underlying_type<LayerType>::type >( left->getLayer() ) < 
+                                       static_cast< std::underlying_type<LayerType>::type >( right->getLayer() ); 
+                            };
 
 #endif

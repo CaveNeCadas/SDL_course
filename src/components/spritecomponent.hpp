@@ -97,8 +97,8 @@ class SpriteComponent : public Component
             }
             m_src_rect.y =  m_animation_index * m_transformComponent->getHeight();
            // spdlog::info ("update");
-            m_dst_rect.x = static_cast<int>( m_transformComponent->getPosition().x ) - Game::s_camera.x;
-            m_dst_rect.y = static_cast<int>( m_transformComponent->getPosition().y ) - Game::s_camera.y;
+            m_dst_rect.x = static_cast<int>( m_transformComponent->getPosition().x ) - (m_isfixed? 0 : Game::s_camera.x);
+            m_dst_rect.y = static_cast<int>( m_transformComponent->getPosition().y ) - (m_isfixed? 0 : Game::s_camera.y);
             m_dst_rect.w = m_transformComponent->getWidth() * m_transformComponent->getScale();
             m_dst_rect.h = m_transformComponent->getHeight()* m_transformComponent->getScale();        
         } 
