@@ -24,6 +24,9 @@ class Game
          void loadLevel (int level);
          bool isRunning() const { return m_isrunning; }
     
+    private:
+
+        void handleCameraMovement();
     
     private:
         bool m_isrunning;
@@ -39,6 +42,8 @@ class Game
         std::unique_ptr < AssetManager  > m_assetmanager;
 
         std::unique_ptr <Map>  m_gameMap;
+
+        SDL_Rect m_camera;
 };
 
 using game_ptr = std::unique_ptr<Game>;

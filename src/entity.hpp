@@ -7,6 +7,7 @@
 #include <map>
 
 #include "graphicshdr.hpp"
+#include "constants.hpp"
 
 
 class Component;
@@ -19,19 +20,21 @@ class Entity
         Entitymanager* m_manager;
         bool m_isActive;
         std::string m_name;
+        LayerType m_layer;
         std::vector< std::unique_ptr< Component > > m_compponents;
         std::map<const std::type_info*, Component*> m_componentTypeMap;
-
+      
     public:
 
-        Entity(Entitymanager* manager, std::string name);
+        Entity(Entitymanager* manager, std::string name, LayerType layer = LayerType::DEFAULT_LAYER );
         virtual ~Entity();
         void update (float deltaTime);
         void initialize();
         void render();
         void destroy();
         bool isActive () const { return m_isActive; }
-
+        LayerType getLayer() const { return  m_layer; }
+        std::string getName() const { return m_name; }
     public:    
 
         template <typename T, typename ... CArgs>
@@ -48,6 +51,9 @@ class Entity
         }
 };
 
+using entity_ptr_t = std::unique_ptr< Entity >;
 
+ auto const entity_cmp = [](entity_ptr_t  & left, entity_ptr_t  & right) { return static_cast< std::underlying_type<LayerType>::type >( left->getLayer() ) < 
+                                                                                static_cast< std::underlying_type<LayerType>::type >( right->getLayer() ); };
 
 #endif

@@ -37,16 +37,25 @@ void Entitymanager::render()
 }
 void Entitymanager::clear()
 {
-
     for (auto & ent : m_entities)
     {
         ent-> destroy();
     }
 
 }
-Entity* Entitymanager::addEntity(std::string name)
+Entity* Entitymanager::addEntity(std::string name, LayerType layer )
 {
-        auto cmp =   std::make_unique< Entity > (this, std::move(name ) ) ;   
-        m_entities.push_back ( std::move(cmp) );
-        return m_entities.back().get();
+        auto cmp =   std::make_unique< Entity > (this, std::move(name), layer ) ;   
+        m_entities.push_back ( std::move(cmp) )  ;
+        return cmp.get();
+}
+
+Entity* Entitymanager::find(std::string const & name )
+{
+    for (auto const & ent : m_entities)
+    {
+        if ( name == ent->getName() ) 
+            return ent.get();
+    }
+    return nullptr;
 }

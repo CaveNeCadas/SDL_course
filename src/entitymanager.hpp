@@ -4,10 +4,12 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <map>
+
 
 #include "graphicshdr.hpp"
 #include "entity.hpp"
-
+#include "constants.hpp"
 class Entity;
 
 class Entitymanager
@@ -15,8 +17,8 @@ class Entitymanager
     private:
 
         SDL_Renderer * m_renderer;
-        std::vector<  std::unique_ptr< Entity > > m_entities;
-
+        std::vector< entity_ptr_t > m_entities;
+        //std::map<entity_ptr_t, decltype(entity_cmp)> ; 
     public:
 
         explicit Entitymanager(  SDL_Renderer * renderer );
@@ -26,9 +28,10 @@ class Entitymanager
         void render();
         void clear();
         SDL_Renderer*  getRenderer () { return m_renderer; }  
-        Entity* addEntity(std::string name);
+        Entity* addEntity(std::string name,  LayerType layer = LayerType::DEFAULT_LAYER );
         std::size_t count () const {   return m_entities.size(); }
         bool empty () const { return m_entities.empty(); }
+        Entity* find(std::string const & name );
 };
 
 

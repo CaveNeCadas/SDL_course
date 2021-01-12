@@ -16,7 +16,7 @@ class TileComponent : public Component
 
     public:
 
-        TileComponent(Entity* owner, SDL_Texture* texture,  int32_t srcx, int32_t srcy, int32_t x, int32_t y, int tilesize, int32_t tilescale)
+        TileComponent(Entity* owner, SDL_Texture* texture,  int32_t srcx, int32_t srcy, int32_t x, int32_t y, int32_t tilesize, int32_t tilescale)
         : Component(owner)
         , m_texture(texture)
         , m_src_rect{ srcx, srcy, tilesize, tilesize}

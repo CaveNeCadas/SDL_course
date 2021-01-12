@@ -4,10 +4,11 @@
 
 #include "component.hpp"
 
-Entity::Entity(Entitymanager* manager, std::string name)
+Entity::Entity(Entitymanager* manager, std::string name , LayerType layer)
 : m_manager(manager)
 , m_isActive{true}
 , m_name(std::move(name))
+, m_layer(layer)
 {
 
 }
