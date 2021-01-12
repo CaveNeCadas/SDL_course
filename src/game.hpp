@@ -20,7 +20,6 @@ class Game
          void update();
          void render();
          void destroy();
-
          void loadLevel (int level);
          bool isRunning() const { return m_isrunning; }
     
@@ -29,7 +28,8 @@ class Game
         void handleCameraMovement();
     
     private:
-        bool m_isrunning;
+        
+	bool m_isrunning;
         SDL_Window* m_mainWindow;
         SDL_Renderer * m_renderer;
         SDL_Event m_event;
@@ -40,10 +40,11 @@ class Game
 
         std::unique_ptr < Entitymanager > m_entityManager; 
         std::unique_ptr < AssetManager  > m_assetmanager;
-
         std::unique_ptr <Map>  m_gameMap;
-
-        SDL_Rect m_camera;
+   
+    public:
+    
+	static SDL_Rect s_camera;
 };
 
 using game_ptr = std::unique_ptr<Game>;

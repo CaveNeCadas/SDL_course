@@ -47,7 +47,7 @@ Entity* Entitymanager::addEntity(std::string name, LayerType layer )
 {
         auto cmp =   std::make_unique< Entity > (this, std::move(name), layer ) ;   
         m_entities.push_back ( std::move(cmp) )  ;
-        return cmp.get();
+        return m_entities.back().get();
 }
 
 Entity* Entitymanager::find(std::string const & name )

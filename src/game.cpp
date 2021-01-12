@@ -6,6 +6,7 @@
 #include "components/keyboardcontrol.hpp"
 
 
+SDL_Rect  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 
  Game::Game ()
 : m_isrunning{false}
@@ -57,11 +58,7 @@ void Game::initialize(int32_t width, int32_t height)
 
     m_entityManager = std::make_unique < Entitymanager> ( m_renderer );
     m_assetmanager  = std::make_unique < AssetManager > ( m_entityManager.get(), m_renderer );
-    m_camera.x =0;
-    m_camera.y =0;
-    m_camera.w =WINDOW_WIDTH;
-    m_camera.h =WINDOW_HEIGHT;
-
+    
     m_isrunning = true;
 }
 
@@ -120,15 +117,17 @@ void Game::loadLevel (int level)
     m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture("map-image"), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
 
-    auto newent = m_entityManager->addEntity ("projectile", LayerType::ENEMY_LAYER );
-    newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);
-    newent->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
-
     auto chopent = m_entityManager->addEntity ("main_player", LayerType::PLAYER_LAYER );
     chopent->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
     chopent->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
     chopent->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
     
+
+    auto newent = m_entityManager->addEntity ("projectile", LayerType::ENEMY_LAYER );
+    newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);
+    newent->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
+
+
     auto radarent = m_entityManager->addEntity ("radarentity", LayerType::ENEMY_LAYER);
     radarent->addComponent<TransformComponent>( 340,400,0,0,64,64,1);
     radarent->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
@@ -140,10 +139,7 @@ void Game::render()
 {
    SDL_SetRenderDrawColor ( m_renderer, 0,0,15, 255 );
    SDL_RenderClear(m_renderer);
-
     m_entityManager->render();
-
-   
     SDL_RenderPresent (m_renderer);
     
 }
@@ -157,9 +153,23 @@ void Game::destroy()
 
 void Game::handleCameraMovement()
 {
-    auto chopent = m_entityManager->find ("main_player");
-    
-    auto transform = chopent->getComponent<TransformComponent>();
-    m_camera.x = transform->getPosition().x - (WINDOW_WIDTH / 2);
-    m_camera.y = transform->getPosition().y - (WINDOW_HEIGHT / 2);   
+    if (m_entityManager)
+    {
+        auto chopent = m_entityManager->find ("main_player");
+        if (nullptr != chopent)
+        {
+            auto transform = chopent->getComponent<TransformComponent>();
+            Game::s_camera.x = transform->getPosition().x - (WINDOW_WIDTH / 2);
+            Game::s_camera.y = transform->getPosition().y - (WINDOW_HEIGHT / 2); 
+
+            Game::s_camera.x = Game::s_camera.x < 0 ? 0 : Game::s_camera.x;
+            Game::s_camera.y = Game::s_camera.y < 0 ? 0 : Game::s_camera.y;
+            
+            Game::s_camera.x = Game::s_camera.x > Game::s_camera.w ? Game::s_camera.w : Game::s_camera.x;
+            Game::s_camera.y = Game::s_camera.y > Game::s_camera.h ? Game::s_camera.h : Game::s_camera.h;
+
+
+        }
+
+    }
 }

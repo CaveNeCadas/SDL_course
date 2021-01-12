@@ -4,6 +4,7 @@
 #include "graphicshdr.hpp"
 #include "component.hpp"
 #include "texturemanager.hpp"
+#include "game.hpp"
 
 class TileComponent : public Component
 {
@@ -29,7 +30,8 @@ class TileComponent : public Component
         
         void update (float deltaTime) override
         {
-                                   
+                 m_dst_rect.x = m_position.x - Game::s_camera.x;
+                 m_dst_rect.y = m_position.y - Game::s_camera.y;       
         } 
 
         void render(  SDL_Renderer * a_renderer ) override
