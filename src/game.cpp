@@ -6,6 +6,11 @@
 #include "components/keyboardcontrol.hpp"
 #include "components/colliderComponent.hpp"
 
+using entity_player_id_t = std::integral_constant<uint32_t, hash("main_player")>;
+using entity_tank_id_t = std::integral_constant<uint32_t, hash("tank_enemy")>;
+using entity_radar_id_t = std::integral_constant<uint32_t, hash("radar_game")>;
+
+
 
 SDL_Rect  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 
@@ -120,26 +125,23 @@ void Game::loadLevel (int level)
     m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture("map-image"), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
 
-    m_game_main_entity = m_entityManager->addEntity (hash("main_player"), LayerType::PLAYER_LAYER );
+    m_game_main_entity = m_entityManager->addEntity (entity_player_id_t::value, LayerType::PLAYER_LAYER );
         m_game_main_entity->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
         m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
         m_game_main_entity->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
         m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
 
-    auto tank_entity = m_entityManager->addEntity (hash("tank-enemy"), LayerType::ENEMY_LAYER );
+    auto tank_entity = m_entityManager->addEntity ( entity_tank_id_t::value  , LayerType::ENEMY_LAYER );
         tank_entity->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
         tank_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
         tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
 
-    auto radar_entity = m_entityManager->addEntity (hash("radarentity"), LayerType::ENEMY_LAYER);
-        radar_entity->addComponent<TransformComponent>( 740,64,0,0,64,64,1);
+    auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
+        radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
         radar_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
 
 
     m_entityManager->initialize();
-
-   // spdlog::info("{} , {}, {}", hash("main_player"), hash("tank-enemy"), hash("radarentity") );
-
 }
 
 void Game::render()
@@ -162,7 +164,7 @@ void Game::checkCollision()
     auto const tagcollided = m_entityManager->checkCollision(m_game_main_entity);
     if (tagcollided != 0)
     {
-        spdlog::info("Boom between {}, {} ",  hash("main_player"),  tagcollided );
+        spdlog::info("collision between between {}, {} ",  entity_player_id_t::value,  tagcollided );
         m_isrunning = false;
     }
 }
