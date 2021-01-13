@@ -51,6 +51,8 @@ class ColliderComponent : public Component
         }
 
         std::string getTag() const { return m_tag;} 
+
+        SDL_Rect const & getCollider() const  { return m_collider;} 
 };
 
 #endif

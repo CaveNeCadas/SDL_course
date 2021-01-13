@@ -26,10 +26,11 @@ class Game
     private:
 
         void handleCameraMovement();
+        void checkCollision();
     
     private:
         
-	bool m_isrunning;
+	    bool m_isrunning;
         SDL_Window* m_mainWindow;
         SDL_Renderer * m_renderer;
         SDL_Event m_event;

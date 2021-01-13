@@ -19,14 +19,14 @@ class Entity
 
         Entitymanager* m_manager;
         bool m_isActive;
-        std::string m_name;
+        uint32_t m_Id;
         LayerType m_layer;
         std::vector< std::unique_ptr< Component > > m_compponents;
         std::map<const std::type_info*, Component*> m_componentTypeMap;
       
     public:
 
-        Entity(Entitymanager* manager, std::string name, LayerType layer = LayerType::DEFAULT_LAYER );
+        Entity(Entitymanager* manager, uint32_t name, LayerType layer = LayerType::DEFAULT_LAYER );
         virtual ~Entity();
         void update (float deltaTime);
         void initialize();
@@ -34,7 +34,7 @@ class Entity
         void destroy();
         bool isActive () const { return m_isActive; }
         LayerType getLayer() const { return  m_layer; }
-        std::string getName() const { return m_name; }
+        uint32_t getId() const { return m_Id; }
     public:    
 
         template <typename T, typename ... CArgs>

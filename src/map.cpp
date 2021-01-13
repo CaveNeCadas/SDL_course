@@ -47,7 +47,7 @@ void Map::loadMap( std::string const & filepath, int32_t sizex, int32_t sizey)
 
 void Map::addTile ( int32_t srcx, int32_t srcy, int32_t x, int32_t y)
 {
-    Entity* newTile =  m_entity_manangr->addEntity("Tile", LayerType::VEGETATION_LAYER);
+    Entity* newTile =  m_entity_manangr->addEntity(hash("Tile"), LayerType::VEGETATION_LAYER);
     newTile->addComponent<TileComponent> ( m_texture, srcx,  srcy,  x,  y, m_tile_size, m_scale);
 
 }

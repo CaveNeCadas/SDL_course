@@ -4,6 +4,7 @@
 #include "components/transformComponent.hpp"
 #include "components/spritecomponent.hpp"
 #include "components/keyboardcontrol.hpp"
+#include "components/colliderComponent.hpp"
 
 
 SDL_Rect  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
@@ -105,6 +106,7 @@ void Game::update()
 
     m_entityManager->update(deltaTime);
     handleCameraMovement();
+    checkCollision();
 }
 
 void Game::loadLevel (int level)
@@ -117,18 +119,21 @@ void Game::loadLevel (int level)
     m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture("map-image"), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
 
-    auto chopent = m_entityManager->addEntity ("main_player", LayerType::PLAYER_LAYER );
+    auto chopent = m_entityManager->addEntity (hash("main_player"), LayerType::PLAYER_LAYER );
     chopent->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
     chopent->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
     chopent->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
+    chopent->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
+    
     
 
-    auto newent = m_entityManager->addEntity ("projectile", LayerType::ENEMY_LAYER );
-    newent->addComponent<TransformComponent>( 0,0,20,20,32,32,1);
+    auto newent = m_entityManager->addEntity (hash("tank-enemy"), LayerType::ENEMY_LAYER );
+    newent->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
     newent->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
+    newent->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
 
 
-    auto radarent = m_entityManager->addEntity ("radarentity", LayerType::ENEMY_LAYER);
+    auto radarent = m_entityManager->addEntity (hash("radarentity"), LayerType::ENEMY_LAYER);
     radarent->addComponent<TransformComponent>( 340,400,0,0,64,64,1);
     radarent->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
     
@@ -151,11 +156,23 @@ void Game::destroy()
     SDL_Quit();
 }
 
+void Game::checkCollision()
+{
+    auto chopent = m_entityManager->find ( hash("main_player") );
+    auto const tagcollided = m_entityManager->checkCollision(chopent);
+
+
+    if (tagcollided != 0)
+    {
+        spdlog::info("Boom");
+    }
+}
+
 void Game::handleCameraMovement()
 {
     if (m_entityManager)
     {
-        auto chopent = m_entityManager->find ("main_player");
+        auto chopent = m_entityManager->find ( hash("main_player") );
         if (nullptr != chopent)
         {
             auto transform = chopent->getComponent<TransformComponent>();

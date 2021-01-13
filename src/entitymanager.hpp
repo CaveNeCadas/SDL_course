@@ -4,9 +4,8 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <map>
-
-
+#include  <unordered_map>
+		
 #include "graphicshdr.hpp"
 #include "entity.hpp"
 #include "constants.hpp"
@@ -17,8 +16,8 @@ class Entitymanager
     private:
 
         SDL_Renderer * m_renderer;
-        std::vector< entity_ptr_t > m_entities;
-        //std::map<entity_ptr_t, decltype(entity_cmp)> ; 
+        //std::vector<  > m_entities;
+        std::unordered_map<uint32_t, entity_ptr_t > m_entities; 
     public:
 
         explicit Entitymanager(  SDL_Renderer * renderer );
@@ -28,10 +27,11 @@ class Entitymanager
         void render();
         void clear();
         SDL_Renderer*  getRenderer () { return m_renderer; }  
-        Entity* addEntity(std::string name,  LayerType layer = LayerType::DEFAULT_LAYER );
+        Entity* addEntity(  uint32_t entId,  LayerType layer = LayerType::DEFAULT_LAYER );
         std::size_t count () const {   return m_entities.size(); }
         bool empty () const { return m_entities.empty(); }
-        Entity* find(std::string const & name );
+        Entity* find( uint32_t entId );
+        uint32_t checkCollision(Entity* entity);
 };
 
 
