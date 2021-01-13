@@ -7,6 +7,8 @@
 #include "entitymanager.hpp"
 #include "assetmanager.hpp"
 #include "map.hpp"
+#include "entity.hpp"
+
 
 
 class Game
@@ -42,7 +44,10 @@ class Game
         std::unique_ptr < Entitymanager > m_entityManager; 
         std::unique_ptr < AssetManager  > m_assetmanager;
         std::unique_ptr <Map>  m_gameMap;
-   
+
+        Entity* m_game_main_entity;
+
+
     public:
     
 	static SDL_Rect s_camera;

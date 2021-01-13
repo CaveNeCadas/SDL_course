@@ -59,7 +59,8 @@ void Game::initialize(int32_t width, int32_t height)
 
     m_entityManager = std::make_unique < Entitymanager> ( m_renderer );
     m_assetmanager  = std::make_unique < AssetManager > ( m_entityManager.get(), m_renderer );
-    
+    m_game_main_entity = nullptr;
+
     m_isrunning = true;
 }
 
@@ -119,34 +120,34 @@ void Game::loadLevel (int level)
     m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture("map-image"), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
 
-    auto chopent = m_entityManager->addEntity (hash("main_player"), LayerType::PLAYER_LAYER );
-    chopent->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
-    chopent->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
-    chopent->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
-    chopent->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
-    
-    
+    m_game_main_entity = m_entityManager->addEntity (hash("main_player"), LayerType::PLAYER_LAYER );
+        m_game_main_entity->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
+        m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
+        m_game_main_entity->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
+        m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
 
-    auto newent = m_entityManager->addEntity (hash("tank-enemy"), LayerType::ENEMY_LAYER );
-    newent->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
-    newent->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
-    newent->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
+    auto tank_entity = m_entityManager->addEntity (hash("tank-enemy"), LayerType::ENEMY_LAYER );
+        tank_entity->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
+        tank_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
+        tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
+
+    auto radar_entity = m_entityManager->addEntity (hash("radarentity"), LayerType::ENEMY_LAYER);
+        radar_entity->addComponent<TransformComponent>( 740,64,0,0,64,64,1);
+        radar_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
 
 
-    auto radarent = m_entityManager->addEntity (hash("radarentity"), LayerType::ENEMY_LAYER);
-    radarent->addComponent<TransformComponent>( 340,400,0,0,64,64,1);
-    radarent->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
-    
     m_entityManager->initialize();
+
+   // spdlog::info("{} , {}, {}", hash("main_player"), hash("tank-enemy"), hash("radarentity") );
+
 }
 
 void Game::render()
 {
-   SDL_SetRenderDrawColor ( m_renderer, 0,0,15, 255 );
-   SDL_RenderClear(m_renderer);
+    SDL_SetRenderDrawColor ( m_renderer, 0,0,15, 255 );
+    SDL_RenderClear(m_renderer);
     m_entityManager->render();
-    SDL_RenderPresent (m_renderer);
-    
+    SDL_RenderPresent (m_renderer);    
 }
 
 void Game::destroy()
@@ -158,35 +159,26 @@ void Game::destroy()
 
 void Game::checkCollision()
 {
-    auto chopent = m_entityManager->find ( hash("main_player") );
-    auto const tagcollided = m_entityManager->checkCollision(chopent);
-
-
+    auto const tagcollided = m_entityManager->checkCollision(m_game_main_entity);
     if (tagcollided != 0)
     {
-        spdlog::info("Boom");
+        spdlog::info("Boom between {}, {} ",  hash("main_player"),  tagcollided );
+        m_isrunning = false;
     }
 }
 
 void Game::handleCameraMovement()
 {
-    if (m_entityManager)
+    if (m_entityManager && nullptr != m_game_main_entity)
     {
-        auto chopent = m_entityManager->find ( hash("main_player") );
-        if (nullptr != chopent)
-        {
-            auto transform = chopent->getComponent<TransformComponent>();
-            Game::s_camera.x = transform->getPosition().x - (WINDOW_WIDTH / 2);
-            Game::s_camera.y = transform->getPosition().y - (WINDOW_HEIGHT / 2); 
+        auto transform = m_game_main_entity->getComponent<TransformComponent>();
+        Game::s_camera.x = transform->getPosition().x - (WINDOW_WIDTH / 2);
+        Game::s_camera.y = transform->getPosition().y - (WINDOW_HEIGHT / 2); 
 
-            Game::s_camera.x = Game::s_camera.x < 0 ? 0 : Game::s_camera.x;
-            Game::s_camera.y = Game::s_camera.y < 0 ? 0 : Game::s_camera.y;
-            
-            Game::s_camera.x = Game::s_camera.x > Game::s_camera.w ? Game::s_camera.w : Game::s_camera.x;
-            Game::s_camera.y = Game::s_camera.y > Game::s_camera.h ? Game::s_camera.h : Game::s_camera.y;
-
-
-        }
-
+        Game::s_camera.x = Game::s_camera.x < 0 ? 0 : Game::s_camera.x;
+        Game::s_camera.y = Game::s_camera.y < 0 ? 0 : Game::s_camera.y;
+        
+        Game::s_camera.x = Game::s_camera.x > Game::s_camera.w ? Game::s_camera.w : Game::s_camera.x;
+        Game::s_camera.y = Game::s_camera.y > Game::s_camera.h ? Game::s_camera.h : Game::s_camera.y;
     }
 }
