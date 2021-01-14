@@ -1,6 +1,8 @@
 #ifndef COLLIDER_COMPONENT_OF_THE_GAME_HPP
 #define COLLIDER_COMPONENT_OF_THE_GAME_HPP
 
+#include <string>
+
 #include "graphicshdr.hpp"
 #include "component.hpp"
 #include "components/transformComponent.hpp"
