@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "entitymanager.hpp"
 #include "entity.hpp"
 #include "component.hpp"
@@ -85,4 +87,38 @@ uint32_t Entitymanager::checkCollision(Entity* entity)
      
 
     return 0;
+}
+
+CollisionType Entitymanager::checkCollision()
+{
+    for (auto & ent_ptr  : m_entities )
+    {
+        if (ent_ptr->hasComponent<ColliderComponent>() )
+        {
+            // check against 
+            auto itr = std::find_if ( std::begin(m_entities)
+                                    , std::end(m_entities)
+                                    , [&ent_ptr](auto const & optr) 
+                                            {  
+                                                return  (ent_ptr->getId() != optr->getId())     && 
+                                                        optr->template hasComponent<ColliderComponent>() &&
+                                                        Collision::checkRectangleCollision  ( (ent_ptr->template getComponent<ColliderComponent>())->getCollider()
+                                                                                            , (optr->template getComponent<ColliderComponent>() )->getCollider()
+                                                                                            ) 
+                                                        ;
+                                            }  
+                                    );
+
+            if (m_entities.end() != itr)
+            {
+                    if ( ent_ptr->getLayer() == LayerType::PLAYER_LAYER && (*itr)->getLayer() == LayerType::ENEMY_LAYER )
+                        return CollisionType::PLAYER_ENEMY_COLLISION;
+                    if ( ent_ptr->getLayer() == LayerType::PLAYER_LAYER && (*itr)->getLayer() == LayerType::OBSTACLE_LAYER )
+                        return CollisionType::PLAYER_LEVEL_COMPLETE_COLLISION;
+                        
+            }                         
+        }
+    }
+
+    return CollisionType::NO_COLLISION;
 }

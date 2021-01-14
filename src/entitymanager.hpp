@@ -30,6 +30,7 @@ class Entitymanager
         bool empty () const { return m_entities.empty(); }
         Entity* find( uint32_t entId );
         uint32_t checkCollision(Entity* entity);
+        CollisionType checkCollision();
 };
 
 

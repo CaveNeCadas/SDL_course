@@ -51,7 +51,7 @@ class Entity
         }
 
         template <typename T>
-        bool hasComponent() 
+        bool hasComponent() const
         {
             return   m_componentTypeMap.end() != m_componentTypeMap.find(&typeid(T)); 
         }

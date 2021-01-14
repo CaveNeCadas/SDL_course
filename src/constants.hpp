@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cassert>
 
+#include "graphicshdr.hpp"
 
 const int32_t WINDOW_WIDTH = 800;
 const int32_t WINDOW_HEIGHT = 800;
@@ -13,6 +14,16 @@ const uint32_t FPS = 60;
 
 const uint32_t FRAME_TARGET_TIME = 1000 / FPS;
 
+enum class CollisionType: uint8_t
+{
+	NO_COLLISION,
+	PLAYER_ENEMY_COLLISION,
+	PLAYER_PROJECTILE_COLLISION,
+	ENEMY_PROJECTILE_COLLISION,
+	PLAYER_VEGETATION_COLLISION,
+	PLAYER_LEVEL_COMPLETE_COLLISION
+};
+
 enum class LayerType : uint8_t
 { 
     DEFAULT_LAYER = 0,
@@ -20,10 +31,13 @@ enum class LayerType : uint8_t
     VEGETATION_LAYER = 2,
     ENEMY_LAYER = 3,
     PLAYER_LAYER = 4,
-    PROJECTILE_LAYER = 5
+    PROJECTILE_LAYER = 5,
+	OBSTACLE_LAYER = 6,
+	UI_LAYER
 };
 
-
+const SDL_Color WHITE_COLOR = {255, 255, 255, 255};
+const SDL_Color GREEN_COLOR = {0, 255, 0, 255};
 
 
 namespace hash_impl

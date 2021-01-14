@@ -5,6 +5,7 @@
 #include "components/spritecomponent.hpp"
 #include "components/keyboardcontrol.hpp"
 #include "components/colliderComponent.hpp"
+#include "components/textlabelComponent.hpp"
 
 using entity_player_id_t = std::integral_constant<uint32_t, hash("main_player")>;
 using entity_tank_id_t = std::integral_constant<uint32_t, hash("tank_enemy")>;
@@ -39,7 +40,12 @@ void Game::initialize(int32_t width, int32_t height)
     {
         spdlog::critical ("Cannot initialize SDL");
         return;
-    }   
+    }
+    if (0 != TTF_Init() )
+    {
+        spdlog::critical ("Cannot initialize SDL");
+        return;
+    }
     // SDL_Window* SDL_CreateWindow(const char* title,
     //                              int         x,
     //                              int         y,
@@ -121,6 +127,10 @@ void Game::loadLevel (int level)
     m_assetmanager->addTexture (hash("chopper-image"), "./assets/images/chopper-spritesheet.png" );
     m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );
     m_assetmanager->addTexture (hash("map-image"), "./assets/tilemaps/jungle.png" );
+    m_assetmanager->addTexture(hash("heliport-image"), "./assets/images/heliport.png");
+
+    m_assetmanager->addFont(hash("charriot-font"), "./assets/fonts/charriot.ttf", 32);
+
 
     m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture(hash("map-image")), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
@@ -136,9 +146,19 @@ void Game::loadLevel (int level)
         tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
         tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
 
+    auto heliport = m_entityManager->addEntity (hash("Heliport"), LayerType::OBSTACLE_LAYER);
+        heliport->addComponent<TransformComponent>(470, 420, 0, 0, 32, 32, 1);
+        heliport->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("heliport-image")) );
+        heliport->addComponent<ColliderComponent>("LEVEL_COMPLETE", 470, 420, 32, 32);
+
+
     auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
         radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
         radar_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("radar-image")) , 60,8, true, true );
+
+
+    auto text_entity = m_entityManager->addEntity ( hash("levelIndicator"), LayerType::UI_LAYER);
+        text_entity->addComponent<TextLabelComponent>( 10,10, "Level I", m_assetmanager->getFont(hash("charriot-font")) , WHITE_COLOR, m_renderer  );
 
     m_entityManager->initialize();
 }
