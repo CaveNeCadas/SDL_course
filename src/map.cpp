@@ -34,9 +34,7 @@ void Map::loadMap( std::string const & filepath, int32_t sizex, int32_t sizey)
             filetile.get(ch);
             int32_t srcx = std::atoi (&ch) * m_tile_size;       
 
-           //    
             addTile ( srcx,  srcy, x*(m_scale*m_tile_size), y*(m_scale*m_tile_size));
-           // spdlog::info ("{}, {}, {}, {}", srcx, srcy, x*(m_scale*m_tile_size), y*(m_scale*m_tile_size) );  
             filetile.ignore();
         }
     }

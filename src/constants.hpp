@@ -53,7 +53,6 @@ constexpr uint32_t inline hash( char const* const aString )
 	return hash_impl::fnv1a<uint32_t>::hash(aString);
 }
 
-
 static_assert( hash("FNV Hash Test") == 0xF38B3DB9, "fnv1a_32::hash failure" );
 
 #endif

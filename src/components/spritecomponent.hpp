@@ -31,14 +31,14 @@ class SpriteComponent : public Component
 
    public:
 
-        SpriteComponent( Entity* owner, AssetManager*astmngr,  std::string const & texId )
-        : SpriteComponent( owner, astmngr, texId, 0,0, false, false )
+        SpriteComponent( Entity* owner, SDL_Texture * texture )
+        : SpriteComponent( owner, texture, 0,0, false, false )
         {/*NOP*/}   
 
-        SpriteComponent( Entity* owner, AssetManager*astmngr,  std::string const & texId, int32_t speed, int32_t numframe, bool hasdir, bool isfixed )
+        SpriteComponent( Entity* owner, SDL_Texture * texture, int32_t speed, int32_t numframe, bool hasdir, bool isfixed )
         : Component(owner)
         , m_transformComponent{nullptr}
-        , m_texture( nullptr )
+        , m_texture( texture )
         , m_src_rect{0,0,0,0}
         , m_dst_rect{0,0,0,0}
         , m_flip{SDL_FLIP_NONE}
@@ -48,8 +48,7 @@ class SpriteComponent : public Component
         , m_isfixed{isfixed}
         , m_animation_name{ (hasdir ? "" : "single_animation") }
         , m_animation_index{ 0 }
-        {/*NOP*/
-            setTexture (astmngr, texId);
+        {
             if ( !hasdir )
             {
                 m_animations [m_animation_name] = Animation (0,m_num_frame, m_animation_speed);
@@ -64,12 +63,6 @@ class SpriteComponent : public Component
             }
         }
 
-
-        void setTexture ( AssetManager*astmngr,  std::string const & texId )
-        {
-                m_texture = astmngr->getTexture (texId);
-        }
-
         void play( std::string const & anim_name )
         {
             m_num_frame       = m_animations[anim_name].getNumFrame();
@@ -81,7 +74,6 @@ class SpriteComponent : public Component
 
         void initialize () override 
         {
-          //  spdlog::info ("initialize");
             m_transformComponent = m_owner->getComponent<TransformComponent>();
             m_src_rect.x = 0;
             m_src_rect.y = 0;
@@ -96,7 +88,6 @@ class SpriteComponent : public Component
                 m_src_rect.x = m_src_rect.w * static_cast<int>((SDL_GetTicks() / m_animation_speed) % m_num_frame);                
             }
             m_src_rect.y =  m_animation_index * m_transformComponent->getHeight();
-           // spdlog::info ("update");
             m_dst_rect.x = static_cast<int>( m_transformComponent->getPosition().x ) - (m_isfixed? 0 : Game::s_camera.x);
             m_dst_rect.y = static_cast<int>( m_transformComponent->getPosition().y ) - (m_isfixed? 0 : Game::s_camera.y);
             m_dst_rect.w = m_transformComponent->getWidth() * m_transformComponent->getScale();
@@ -105,7 +96,6 @@ class SpriteComponent : public Component
 
         void render(  SDL_Renderer * a_renderer ) override
         {
-            //spdlog::info ("draw");
             TextureManager::draw ( m_texture, m_src_rect, m_dst_rect, m_flip , a_renderer);
         }
 };

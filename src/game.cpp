@@ -117,29 +117,28 @@ void Game::update()
 
 void Game::loadLevel (int level)
 {
-    m_assetmanager->addTexture ("tank-image", "./assets/images/tank-big-right.png" );
-    m_assetmanager->addTexture ("chopper-image", "./assets/images/chopper-spritesheet.png" );
-    m_assetmanager->addTexture ("radar-image", "./assets/images/radar.png"  );
-    m_assetmanager->addTexture ("map-image", "./assets/tilemaps/jungle.png" );
+    m_assetmanager->addTexture (hash("tank-image"), "./assets/images/tank-big-right.png" );
+    m_assetmanager->addTexture (hash("chopper-image"), "./assets/images/chopper-spritesheet.png" );
+    m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );
+    m_assetmanager->addTexture (hash("map-image"), "./assets/tilemaps/jungle.png" );
 
-    m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture("map-image"), 2, 32 );
+    m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture(hash("map-image")), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
 
     m_game_main_entity = m_entityManager->addEntity (entity_player_id_t::value, LayerType::PLAYER_LAYER );
         m_game_main_entity->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
-        m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "chopper-image", 90,2, true, false );
+        m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("chopper-image")) , 90,2, true, false );
         m_game_main_entity->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
         m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
 
     auto tank_entity = m_entityManager->addEntity ( entity_tank_id_t::value  , LayerType::ENEMY_LAYER );
         tank_entity->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
-        tank_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "tank-image" );
+        tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
         tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
 
     auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
         radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
-        radar_entity->addComponent<SpriteComponent>( m_assetmanager.get(), "radar-image", 60,8, true, true );
-
+        radar_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("radar-image")) , 60,8, true, true );
 
     m_entityManager->initialize();
 }

@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <unordered_map>
 		
 #include "graphicshdr.hpp"
 #include "entity.hpp"
@@ -17,7 +16,6 @@ class Entitymanager
 
         SDL_Renderer * m_renderer;
         std::vector< entity_ptr_t > m_entities;
-        //std::unordered_map<uint32_t, entity_ptr_t > m_entities; 
     public:
 
         explicit Entitymanager(  SDL_Renderer * renderer );

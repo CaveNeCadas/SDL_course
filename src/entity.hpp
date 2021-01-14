@@ -50,7 +50,6 @@ class Entity
             return static_cast<T*>( m_componentTypeMap[ &typeid(T) ] );
         }
 
-
         template <typename T>
         bool hasComponent() 
         {

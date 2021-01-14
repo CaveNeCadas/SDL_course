@@ -18,12 +18,12 @@ void AssetManager::clear()
     m_textures.clear();
 }
 
-void AssetManager::addTexture (std::string textId, char const * filename)
+void AssetManager::addTexture ( uint32_t textId, char const * filename)
 {
     m_textures[textId] = TextureManager::loadTexture(filename, m_renderer);
 }
 
-SDL_Texture* AssetManager::getTexture(std::string const & tid) 
+SDL_Texture* AssetManager::getTexture( uint32_t tid) 
 {   
     return m_textures[tid];
 }
