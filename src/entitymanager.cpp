@@ -27,11 +27,21 @@ void Entitymanager::initialize()
 
 void Entitymanager::update (float deltaTime)
 {
-    for (auto & ent : m_entities)
+    auto curr = m_entities.begin();
+    while (curr != m_entities.end() )
     {
-        ent-> update(deltaTime);
+        if ( !(*curr)->isActive() )
+        {
+            curr = m_entities.erase ( curr );
+        }
+        else
+        {
+            (*curr)->update(deltaTime);
+            curr = std::next (curr);
+        }
     }
 }
+
 void Entitymanager::render()
 {
     for (auto & ent : m_entities)

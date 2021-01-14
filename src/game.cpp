@@ -6,6 +6,7 @@
 #include "components/keyboardcontrol.hpp"
 #include "components/colliderComponent.hpp"
 #include "components/textlabelComponent.hpp"
+#include "components/projectileemiterComponent.hpp"
 
 using entity_player_id_t = std::integral_constant<uint32_t, hash("main_player")>;
 using entity_tank_id_t = std::integral_constant<uint32_t, hash("tank_enemy")>;
@@ -128,7 +129,7 @@ void Game::loadLevel (int level)
     m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );
     m_assetmanager->addTexture (hash("map-image"), "./assets/tilemaps/jungle.png" );
     m_assetmanager->addTexture(hash("heliport-image"), "./assets/images/heliport.png");
-
+    m_assetmanager->addTexture(hash("projectile-image"), "./assets/images/bullet-enemy.png");
     m_assetmanager->addFont(hash("charriot-font"), "./assets/fonts/charriot.ttf", 32);
 
 
@@ -145,6 +146,14 @@ void Game::loadLevel (int level)
         tank_entity->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
         tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
         tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
+
+
+    auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
+        projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
+        projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
+        projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
+        projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 500, true );
+
 
     auto heliport = m_entityManager->addEntity (hash("Heliport"), LayerType::OBSTACLE_LAYER);
         heliport->addComponent<TransformComponent>(470, 420, 0, 0, 32, 32, 1);
