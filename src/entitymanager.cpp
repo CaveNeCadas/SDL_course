@@ -30,14 +30,13 @@ void Entitymanager::update (float deltaTime)
     auto curr = m_entities.begin();
     while (curr != m_entities.end() )
     {
-        if ( !(*curr)->isActive() )
-        {
-            curr = m_entities.erase ( curr );
-        }
-        else
+        if ( (*curr)->isActive() )
         {
             (*curr)->update(deltaTime);
-            curr = std::next (curr);
+            curr = std::next (curr);        }
+        else
+        {
+            curr = m_entities.erase ( curr );
         }
     }
 }

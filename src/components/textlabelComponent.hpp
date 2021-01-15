@@ -3,7 +3,7 @@
 
 #include "graphicshdr.hpp"
 #include "component.hpp"
-#include "fontnanager.hpp"
+#include "fontmanager.hpp"
 
 class TextLabelComponent : public Component
 {

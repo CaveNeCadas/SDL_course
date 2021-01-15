@@ -8,11 +8,9 @@
 #include "components/textlabelComponent.hpp"
 #include "components/projectileemiterComponent.hpp"
 
-using entity_player_id_t = std::integral_constant<uint32_t, hash("main_player")>;
-using entity_tank_id_t = std::integral_constant<uint32_t, hash("tank_enemy")>;
-using entity_radar_id_t = std::integral_constant<uint32_t, hash("radar_game")>;
-
-
+using entity_player_id_t    = std::integral_constant<uint32_t, hash("main_player")>;
+using entity_tank_id_t      = std::integral_constant<uint32_t, hash("tank_enemy")>;
+using entity_radar_id_t     = std::integral_constant<uint32_t, hash("radar_game")>;
 
 SDL_Rect  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 
@@ -23,9 +21,7 @@ SDL_Rect  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 , projectilePosition(0.f,0.0f)
 , projectileVelocity(20.f, 20.f)
 , ticklastframe(0)
-{
-
-}
+{/*NOP*/}
 
 Game::~Game()
 {
@@ -44,7 +40,7 @@ void Game::initialize(int32_t width, int32_t height)
     }
     if (0 != TTF_Init() )
     {
-        spdlog::critical ("Cannot initialize SDL");
+        spdlog::critical ("Cannot initialize TTF");
         return;
     }
     // SDL_Window* SDL_CreateWindow(const char* title,
@@ -77,9 +73,7 @@ void Game::initialize(int32_t width, int32_t height)
 }
 
 void Game::processInput ()
-{
-
-    
+{   
     SDL_PollEvent (&m_event);
 
     switch ( m_event.type ) 
@@ -91,6 +85,7 @@ void Game::processInput ()
     case SDL_KEYDOWN:
         m_isrunning = !( m_event.key.keysym.sym == SDLK_ESCAPE)  ;
         break;
+ 
     default:
         break;
     }
@@ -106,7 +101,6 @@ void Game::update()
     {
         SDL_Delay (time2Wait);
     }
- 
      
     //delta time is diff from last frame converted in seconds
     float deltaTime = ( newTick - ticklastframe )/ 1000.f;
@@ -128,10 +122,9 @@ void Game::loadLevel (int level)
     m_assetmanager->addTexture (hash("chopper-image"), "./assets/images/chopper-spritesheet.png" );
     m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );
     m_assetmanager->addTexture (hash("map-image"), "./assets/tilemaps/jungle.png" );
-    m_assetmanager->addTexture(hash("heliport-image"), "./assets/images/heliport.png");
-    m_assetmanager->addTexture(hash("projectile-image"), "./assets/images/bullet-enemy.png");
-    m_assetmanager->addFont(hash("charriot-font"), "./assets/fonts/charriot.ttf", 32);
-
+    m_assetmanager->addTexture (hash("heliport-image"), "./assets/images/heliport.png");
+    m_assetmanager->addTexture (hash("projectile-image"), "./assets/images/bullet-enemy.png");
+    m_assetmanager->addFont    (hash("charriot-font"), "./assets/fonts/charriot.ttf", 32);
 
     m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture(hash("map-image")), 2, 32 );
     m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
@@ -143,28 +136,24 @@ void Game::loadLevel (int level)
         m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
 
     auto tank_entity = m_entityManager->addEntity ( entity_tank_id_t::value  , LayerType::ENEMY_LAYER );
-        tank_entity->addComponent<TransformComponent>( 150,495,10,0,32,32,1);
+        tank_entity->addComponent<TransformComponent>( 150,495,0,0,32,32,1);
         tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
         tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
-
 
     auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
         projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
         projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
         projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
-        projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 500, true );
-
+        projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 300, true );
 
     auto heliport = m_entityManager->addEntity (hash("Heliport"), LayerType::OBSTACLE_LAYER);
         heliport->addComponent<TransformComponent>(470, 420, 0, 0, 32, 32, 1);
         heliport->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("heliport-image")) );
         heliport->addComponent<ColliderComponent>("LEVEL_COMPLETE", 470, 420, 32, 32);
 
-
     auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
         radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
         radar_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("radar-image")) , 60,8, true, true );
-
 
     auto text_entity = m_entityManager->addEntity ( hash("levelIndicator"), LayerType::UI_LAYER);
         text_entity->addComponent<TextLabelComponent>( 10,10, "Level I", m_assetmanager->getFont(hash("charriot-font")) , WHITE_COLOR, m_renderer  );

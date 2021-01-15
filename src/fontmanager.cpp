@@ -1,5 +1,5 @@
 
-#include "fontnanager.hpp"
+#include "fontmanager.hpp"
 
 TTF_Font* FontManager::loadFont (char const * filename, int32_t size)
 {
