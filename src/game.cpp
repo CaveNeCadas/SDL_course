@@ -118,6 +118,13 @@ void Game::update()
 
 void Game::loadLevel (int level)
 {
+    sol::state lua_engine;
+    lua_engine.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
+    std::string const level_to_load ( std::string("Level") + std::to_string(level) );
+
+    lua_engine.script_file (level_to_load + std::string(".lua"));
+
+
     m_assetmanager->addTexture (hash("tank-image"), "./assets/images/tank-big-right.png" );
     m_assetmanager->addTexture (hash("chopper-image"), "./assets/images/chopper-spritesheet.png" );
     m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );

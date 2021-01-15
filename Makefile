@@ -6,6 +6,7 @@ build:
 	-I"${DEVLIB}/include" \
 	-L"${DEVLIB}/lib" \
 	-llua \
+	-ldl \
 	-lSDL2 \
 	-lSDL2_image \
 	-lSDL2_ttf \

@@ -8,6 +8,7 @@
 #include "assetmanager.hpp"
 #include "map.hpp"
 #include "entity.hpp"
+#include "sol/sol.hpp"
 
 
 
