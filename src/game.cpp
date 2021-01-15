@@ -125,6 +125,18 @@ void Game::loadLevel (int level)
     lua_engine.script_file (level_to_load + std::string(".lua"));
 
 
+    sol::table levelData = lua_engine[level_to_load];
+    uint32_t assetIndex{0};
+    /*
+    load Assets
+    */
+    while (true)
+    {
+        sol::optional<sol::table> exists_asset_node;
+
+    }
+
+
     m_assetmanager->addTexture (hash("tank-image"), "./assets/images/tank-big-right.png" );
     m_assetmanager->addTexture (hash("chopper-image"), "./assets/images/chopper-spritesheet.png" );
     m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );
