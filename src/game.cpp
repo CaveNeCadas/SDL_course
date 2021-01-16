@@ -237,7 +237,6 @@ void Game::loadLevel (int level)
         }
 
         sol::optional<sol::table> exists_entity_inputcomponent = component_table["input"];
-
         if (exists_entity_inputcomponent != sol::nullopt)
         {
             sol::optional<sol::table> exists_entity_inputkeyboardcomponent = component_table["input"]["keyboard"];
@@ -253,38 +252,30 @@ void Game::loadLevel (int level)
             }
         }
 
+
+        sol::optional<sol::table> exists_entity_projectileEmittercomponent = component_table["projectileEmitter"];
+        if (exists_entity_projectileEmittercomponent != sol::nullopt)
+        {
+            int32_t speed = component_table["projectileEmitter"]["speed"];
+            int32_t range = component_table["projectileEmitter"]["range"];
+            float angle = component_table["projectileEmitter"]["angle"];
+            bool shouldLoop = component_table["projectileEmitter"]["shouldLoop"].get_or(false);
+            // auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
+            //     projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
+            //     projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
+            //     projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
+            //     projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 300, true );
+            current_entity->addComponent<ProjectileEmitterComponent>( speed, angle, range, shouldLoop );
+        }
+
         entity_Index += 1;
     }
     
 
-    // m_game_main_entity = m_entityManager->addEntity (entity_player_id_t::value, LayerType::PLAYER_LAYER );
-    //     m_game_main_entity->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
-    //     m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("chopper-image")) , 90,2, true, false );
-    //     m_game_main_entity->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
-    //     m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
-
-    // auto tank_entity = m_entityManager->addEntity ( entity_tank_id_t::value  , LayerType::ENEMY_LAYER );
-    //     tank_entity->addComponent<TransformComponent>( 150,495,0,0,32,32,1);
-    //     tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
-    //     tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
-
-    // auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
-    //     projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
-    //     projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
-    //     projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
-    //     projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 300, true );
-
-    // auto heliport = m_entityManager->addEntity (hash("Heliport"), LayerType::OBSTACLE_LAYER);
-    //     heliport->addComponent<TransformComponent>(470, 420, 0, 0, 32, 32, 1);
-    //     heliport->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("heliport-image")) );
-    //     heliport->addComponent<ColliderComponent>("LEVEL_COMPLETE", 470, 420, 32, 32);
-
-    // auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
-    //     radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
-    //     radar_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("radar-image")) , 60,8, true, true );
-
-    // auto text_entity = m_entityManager->addEntity ( hash("levelIndicator"), LayerType::UI_LAYER);
-    //     text_entity->addComponent<TextLabelComponent>( 10,10, "Level I", m_assetmanager->getFont(hash("charriot-font")) , WHITE_COLOR, m_renderer  );
+    auto text_entity = m_entityManager->addEntity ( hash("levelIndicator"), LayerType::UI_LAYER);
+        char title[80];
+        sprintf(title, "Level %d", level);
+        text_entity->addComponent<TextLabelComponent>( 10,10, title, m_assetmanager->getFont(hash("charriot-font")) , WHITE_COLOR, m_renderer  );
 
     m_entityManager->initialize();
 }

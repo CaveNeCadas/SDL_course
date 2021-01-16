@@ -35,7 +35,7 @@ class ProjectileEmitterComponent : public Component
                 m_origin = m_transform->getPosition();
                 m_transform->getVelocity().x =  glm::cos( m_angle) * m_speed;
                 m_transform->getVelocity().y =  glm::sin( m_angle) * m_speed;
-                spdlog::info ("setting velocity {}, {}", m_transform->getVelocity().x, m_transform->getVelocity().y );
+                //spdlog::info ("setting velocity {}, {}", m_transform->getVelocity().x, m_transform->getVelocity().y );
             }
         }
         
