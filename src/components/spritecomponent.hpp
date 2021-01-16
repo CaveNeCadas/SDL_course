@@ -49,6 +49,7 @@ class SpriteComponent : public Component
         , m_animation_name{ (hasdir ? "" : "single_animation") }
         , m_animation_index{ 0 }
         {
+           
             if ( !hasdir )
             {
                 m_animations [m_animation_name] = Animation (0,m_num_frame, m_animation_speed);
@@ -69,11 +70,14 @@ class SpriteComponent : public Component
             m_animation_index = m_animations[anim_name].getIndex();
             m_animation_speed = m_animations[anim_name].getSpeed();
             m_animation_name = anim_name;
-
         }
 
         void initialize () override 
         {
+            if (!m_owner->hasComponent<TransformComponent>())
+            {
+                return;
+            }
             m_transformComponent = m_owner->getComponent<TransformComponent>();
             m_src_rect.x = 0;
             m_src_rect.y = 0;
@@ -83,6 +87,10 @@ class SpriteComponent : public Component
         
         void update (float deltaTime) override
         {
+            if (nullptr == m_transformComponent)
+            {
+                return;
+            }
             if (m_isAnimated)
             {
                 m_src_rect.x = m_src_rect.w * static_cast<int>((SDL_GetTicks() / m_animation_speed) % m_num_frame);                

@@ -15,7 +15,7 @@ int main ()
 
     game -> initialize (WINDOW_WIDTH, WINDOW_HEIGHT );
 
-    game -> loadLevel(0);
+    game -> loadLevel(1);
     
     while (game->isRunning())
     {

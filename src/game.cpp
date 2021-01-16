@@ -121,61 +121,170 @@ void Game::loadLevel (int level)
     sol::state lua_engine;
     lua_engine.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
     std::string const level_to_load ( std::string("Level") + std::to_string(level) );
+    std::string const file_to_load ( std::string("./assets/scripts/") + level_to_load + std::string(".lua") );
 
-    lua_engine.script_file (level_to_load + std::string(".lua"));
+    lua_engine.script_file ( file_to_load );
+    
+    spdlog::info ("reading {} from file {}", level_to_load, file_to_load );
 
-
-    sol::table levelData = lua_engine[level_to_load];
+    sol::table levelData = lua_engine["Level1"];
+    sol::table assetsTable = levelData["assets"]; 
     uint32_t assetIndex{0};
-    /*
-    load Assets
-    */
     while (true)
     {
-        sol::optional<sol::table> exists_asset_node;
-
+        sol::optional<sol::table> exists_asset_node = assetsTable[assetIndex];
+        if (exists_asset_node == sol::nullopt)
+        {
+            break;
+        }
+        std::string const asset_type( assetsTable[assetIndex]["type"] );
+        if( asset_type == "texture" )
+        {
+            std::string const asset_id = assetsTable[assetIndex]["id"];
+            std::string const asset_file = assetsTable[assetIndex]["file"];
+           
+            m_assetmanager->addTexture (hash(asset_id.c_str()), asset_file.c_str() );
+        }
+        else if( asset_type == "font" )
+        {
+            std::string const asset_id = assetsTable[assetIndex]["id"];
+            std::string const asset_file = assetsTable[assetIndex]["file"];
+            int32_t size = assetsTable[assetIndex]["fontSize"];
+            m_assetmanager->addFont (hash(asset_id.c_str()), asset_file.c_str(), size );
+        }
+        else
+        {
+            spdlog::critical ("unknown aasset type {}", asset_type );
+            return;
+        }
+        assetIndex += 1;
     }
 
+    sol::table  mapTable = levelData["map"]; 
+    std::string maptextureAssetId = mapTable["textureAssetId"];
+    std::string mapfile = mapTable["file"];
+    int32_t mapscale    = mapTable["scale"];
+    int32_t maptileSize = mapTable["tileSize"];
+    int32_t mapmapSizeX = mapTable["mapSizeX"];
+    int32_t mapmapSizeY = mapTable["mapSizeY"];
 
-    m_assetmanager->addTexture (hash("tank-image"), "./assets/images/tank-big-right.png" );
-    m_assetmanager->addTexture (hash("chopper-image"), "./assets/images/chopper-spritesheet.png" );
-    m_assetmanager->addTexture (hash("radar-image"), "./assets/images/radar.png"  );
-    m_assetmanager->addTexture (hash("map-image"), "./assets/tilemaps/jungle.png" );
-    m_assetmanager->addTexture (hash("heliport-image"), "./assets/images/heliport.png");
-    m_assetmanager->addTexture (hash("projectile-image"), "./assets/images/bullet-enemy.png");
-    m_assetmanager->addFont    (hash("charriot-font"), "./assets/fonts/charriot.ttf", 32);
+    m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture(hash(maptextureAssetId.c_str())), mapscale, maptileSize );
+    m_gameMap->loadMap (mapfile.c_str(), mapmapSizeX, mapmapSizeY );
 
-    m_gameMap = std::make_unique<Map>( m_entityManager.get(), m_assetmanager->getTexture(hash("map-image")), 2, 32 );
-    m_gameMap->loadMap ("./assets/tilemaps/jungle.map", 25, 20 );
 
-    m_game_main_entity = m_entityManager->addEntity (entity_player_id_t::value, LayerType::PLAYER_LAYER );
-        m_game_main_entity->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
-        m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("chopper-image")) , 90,2, true, false );
-        m_game_main_entity->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
-        m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
+    sol::table  entities_Table = levelData["entities"]; 
+    uint32_t entity_Index{0};
 
-    auto tank_entity = m_entityManager->addEntity ( entity_tank_id_t::value  , LayerType::ENEMY_LAYER );
-        tank_entity->addComponent<TransformComponent>( 150,495,0,0,32,32,1);
-        tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
-        tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
+    while (true)
+    {
+        sol::optional<sol::table> exists_entity_node = entities_Table[entity_Index];
+         if (exists_entity_node == sol::nullopt)
+        {
+            break;
+        }
 
-    auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
-        projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
-        projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
-        projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
-        projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 300, true );
+        auto entity_player_id = hash (   (std::string ( entities_Table[entity_Index]["name"] ) ).c_str()  );
+        auto entity_layer = static_cast<LayerType>(entities_Table[entity_Index]["layer"] );
 
-    auto heliport = m_entityManager->addEntity (hash("Heliport"), LayerType::OBSTACLE_LAYER);
-        heliport->addComponent<TransformComponent>(470, 420, 0, 0, 32, 32, 1);
-        heliport->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("heliport-image")) );
-        heliport->addComponent<ColliderComponent>("LEVEL_COMPLETE", 470, 420, 32, 32);
+        Entity* current_entity = m_entityManager->addEntity ( entity_player_id, entity_layer );
+        if (0 == entity_Index)
+        {
+            m_game_main_entity = current_entity;  
+        } 
 
-    auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
-        radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
-        radar_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("radar-image")) , 60,8, true, true );
+        sol::table component_table = entities_Table[entity_Index]["components"];
+        sol::optional<sol::table> exists_entity_transformcomponent = component_table["transform"];
+        if (exists_entity_node != sol::nullopt)
+        {
+            current_entity->addComponent<TransformComponent>( component_table["transform"]["position"]["x"]
+                                                            , component_table["transform"]["position"]["y"]
+                                                            , component_table["transform"]["velocity"]["x"]
+                                                            , component_table["transform"]["velocity"]["y"]
+                                                            , component_table["transform"]["width"]
+                                                            , component_table["transform"]["height"]
+                                                            , component_table["transform"]["scale"]
+                                                            );
+        }
+        sol::optional<sol::table> exists_entity_spritecomponent = component_table["sprite"];
+        if (exists_entity_spritecomponent != sol::nullopt)
+        {
+            bool is_animated = component_table["sprite"]["animated"];
+            int32_t animationSpeed{1};
+            int32_t frameCount{1};
+            bool hasDirections{false};
+            bool fixed{false};
 
-    auto text_entity = m_entityManager->addEntity ( hash("levelIndicator"), LayerType::UI_LAYER);
-        text_entity->addComponent<TextLabelComponent>( 10,10, "Level I", m_assetmanager->getFont(hash("charriot-font")) , WHITE_COLOR, m_renderer  );
+            if (is_animated)
+            {
+                animationSpeed  = component_table["sprite"]["animationSpeed"];
+                frameCount      = component_table["sprite"]["frameCount"];
+                hasDirections   = component_table["sprite"]["hasDirections"];
+                fixed           = component_table["sprite"]["fixed"];
+            }
+
+            current_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash((std::string(component_table["sprite"]["textureAssetId"])).c_str())) 
+                                                         , animationSpeed
+                                                         , frameCount
+                                                         , hasDirections
+                                                         , fixed
+                                                         );
+        }
+
+        sol::optional<sol::table> exists_entity_collidercomponent = component_table["collider"];
+        if (exists_entity_collidercomponent != sol::nullopt)
+        {
+            current_entity->addComponent<ColliderComponent>( component_table["collider"]["tag"], 240,120,32,32  );
+        }
+
+        sol::optional<sol::table> exists_entity_inputcomponent = component_table["input"];
+
+        if (exists_entity_inputcomponent != sol::nullopt)
+        {
+            sol::optional<sol::table> exists_entity_inputkeyboardcomponent = component_table["input"]["keyboard"];
+            if (exists_entity_inputkeyboardcomponent != sol::nullopt)
+            {
+                current_entity->addComponent<KeyboardComponent>( &m_event
+                                                                , component_table["input"]["keyboard"]["up"]
+                                                                , component_table["input"]["keyboard"]["right"]
+                                                                , component_table["input"]["keyboard"]["down"]
+                                                                , component_table["input"]["keyboard"]["left"]
+                                                                , component_table["input"]["keyboard"]["shoot"]
+                                                                );
+            }
+        }
+
+        entity_Index += 1;
+    }
+    
+
+    // m_game_main_entity = m_entityManager->addEntity (entity_player_id_t::value, LayerType::PLAYER_LAYER );
+    //     m_game_main_entity->addComponent<TransformComponent>( 240,120,0,0,32,32,1);
+    //     m_game_main_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("chopper-image")) , 90,2, true, false );
+    //     m_game_main_entity->addComponent<KeyboardComponent>(  &m_event, "up", "right", "down", "left", "space");
+    //     m_game_main_entity->addComponent<ColliderComponent>( "player tag", 240,120,32,32  );
+
+    // auto tank_entity = m_entityManager->addEntity ( entity_tank_id_t::value  , LayerType::ENEMY_LAYER );
+    //     tank_entity->addComponent<TransformComponent>( 150,495,0,0,32,32,1);
+    //     tank_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("tank-image")) );
+    //     tank_entity->addComponent<ColliderComponent>( "tank tag", 150,495,32,32  );
+
+    // auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
+    //     projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
+    //     projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
+    //     projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
+    //     projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 300, true );
+
+    // auto heliport = m_entityManager->addEntity (hash("Heliport"), LayerType::OBSTACLE_LAYER);
+    //     heliport->addComponent<TransformComponent>(470, 420, 0, 0, 32, 32, 1);
+    //     heliport->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("heliport-image")) );
+    //     heliport->addComponent<ColliderComponent>("LEVEL_COMPLETE", 470, 420, 32, 32);
+
+    // auto radar_entity = m_entityManager->addEntity (entity_radar_id_t::value, LayerType::ENEMY_LAYER);
+    //     radar_entity->addComponent<TransformComponent>( 720,14,0,0,64,64,1);
+    //     radar_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("radar-image")) , 60,8, true, true );
+
+    // auto text_entity = m_entityManager->addEntity ( hash("levelIndicator"), LayerType::UI_LAYER);
+    //     text_entity->addComponent<TextLabelComponent>( 10,10, "Level I", m_assetmanager->getFont(hash("charriot-font")) , WHITE_COLOR, m_renderer  );
 
     m_entityManager->initialize();
 }
@@ -197,12 +306,15 @@ void Game::destroy()
 
 void Game::checkCollision()
 {
-    auto const tagcollided = m_entityManager->checkCollision(m_game_main_entity);
-    if (tagcollided != 0)
-    {
-        spdlog::info("collision between between {}, {} ",  entity_player_id_t::value,  tagcollided );
-        m_isrunning = false;
-    }
+      if (nullptr != m_game_main_entity)
+      {
+        auto const tagcollided = m_entityManager->checkCollision(m_game_main_entity);
+        if (tagcollided != 0)
+        {
+            spdlog::info("collision between between {}, {} ",  entity_player_id_t::value,  tagcollided );
+            m_isrunning = false;
+        }
+      }
 }
 
 void Game::handleCameraMovement()

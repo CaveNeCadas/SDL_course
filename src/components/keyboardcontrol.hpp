@@ -51,8 +51,10 @@ class KeyboardComponent : public Component
         }
         
          void update(float deltaTime) override {
-            if ( m_event->type == SDL_KEYDOWN) {
+            if ( m_event->type == SDL_KEYDOWN) 
+            {
                 std::string keyCode = std::to_string( m_event->key.keysym.sym);
+
                 if (keyCode.compare(m_upKey) == 0) 
                 {
                     transform->updateVelocity ( 0, -25);
