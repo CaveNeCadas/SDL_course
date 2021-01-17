@@ -194,14 +194,31 @@ void Game::loadLevel (int level)
 
         sol::table component_table = entities_Table[entity_Index]["components"];
         sol::optional<sol::table> exists_entity_transformcomponent = component_table["transform"];
+
+        int32_t transform_position_x{0};
+        int32_t transform_position_y{0};
+        int32_t transform_velocity_x{0};
+        int32_t transform_velocity_y{0};
+        int32_t transform_width{0};
+        int32_t transform_height{0};
+
+
+
         if (exists_entity_node != sol::nullopt)
         {
-            current_entity->addComponent<TransformComponent>( component_table["transform"]["position"]["x"]
-                                                            , component_table["transform"]["position"]["y"]
-                                                            , component_table["transform"]["velocity"]["x"]
-                                                            , component_table["transform"]["velocity"]["y"]
-                                                            , component_table["transform"]["width"]
-                                                            , component_table["transform"]["height"]
+            transform_position_x = component_table["transform"]["position"]["x"];
+            transform_position_y = component_table["transform"]["position"]["y"];
+            transform_velocity_x = component_table["transform"]["velocity"]["x"];
+            transform_velocity_y = component_table["transform"]["velocity"]["y"];
+            transform_width      = component_table["transform"]["width"];
+            transform_height     = component_table["transform"]["height"];
+
+            current_entity->addComponent<TransformComponent>( transform_position_x
+                                                            , transform_position_y
+                                                            , transform_velocity_x
+                                                            , transform_velocity_y
+                                                            , transform_width
+                                                            , transform_height
                                                             , component_table["transform"]["scale"]
                                                             );
         }
@@ -256,18 +273,21 @@ void Game::loadLevel (int level)
         sol::optional<sol::table> exists_entity_projectileEmittercomponent = component_table["projectileEmitter"];
         if (exists_entity_projectileEmittercomponent != sol::nullopt)
         {
-            int32_t speed = component_table["projectileEmitter"]["speed"];
-            int32_t range = component_table["projectileEmitter"]["range"];
-            float angle = component_table["projectileEmitter"]["angle"];
+            int32_t speed   = component_table["projectileEmitter"]["speed"];
+            int32_t range   = component_table["projectileEmitter"]["range"];
+            float angle     = component_table["projectileEmitter"]["angle"];
             bool shouldLoop = component_table["projectileEmitter"]["shouldLoop"].get_or(false);
-            // auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
-            //     projectile_entity->addComponent<TransformComponent>( 150 + 16 ,495+16 ,0,0, 4,4,1);
-            //     projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash("projectile-image") ) );
-            //     projectile_entity->addComponent<ColliderComponent>( "projectile tag", 150 + 16 ,495 +16 , 4, 4  );
-            //     projectile_entity->addComponent<ProjectileEmitterComponent>( 150, 270.f, 300, true );
-            current_entity->addComponent<ProjectileEmitterComponent>( speed, angle, range, shouldLoop );
+            int32_t width   = component_table["projectileEmitter"]["width"].get_or(4);
+            int32_t height  = component_table["projectileEmitter"]["height"].get_or(4);
+            std::string textureAssetId = component_table["projectileEmitter"]["textureAssetId"].get_or(std::string("projectile-texture"));//hash();
+            auto projectile_entity = m_entityManager->addEntity ( hash("enemy-projectile")  , LayerType::PROJECTILE_LAYER );
+                projectile_entity->addComponent<TransformComponent> ( transform_position_x + (transform_width/2) 
+                                                                    , transform_position_y + (transform_height/2) , 0,0, width,height,1);
+                projectile_entity->addComponent<SpriteComponent>( m_assetmanager->getTexture(hash(textureAssetId.c_str()) ) );
+                projectile_entity->addComponent<ColliderComponent>( "projectile tag", transform_position_x + (transform_width/2)  
+                                                                  ,  transform_position_y + (transform_height/2) , width, height );
+                projectile_entity->addComponent<ProjectileEmitterComponent>( speed, angle, range, true );
         }
-
         entity_Index += 1;
     }
     
