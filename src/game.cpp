@@ -202,8 +202,6 @@ void Game::loadLevel (int level)
         int32_t transform_width{0};
         int32_t transform_height{0};
 
-
-
         if (exists_entity_node != sol::nullopt)
         {
             transform_position_x = component_table["transform"]["position"]["x"];

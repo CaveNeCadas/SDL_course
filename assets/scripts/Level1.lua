@@ -1,7 +1,18 @@
 ----------------------------------------------------
--- Start the seed for the Lua math.random
+-- Get the current time of the day from the OS
 ----------------------------------------------------
 math.randomseed(os.time())
+local currentSystemHour = os.date("*t").hour
+local mapTextureAssetId = "terrain-texture-day"
+
+----------------------------------------------------
+-- Use a night-map or a day-map texture (9am-9pm)
+----------------------------------------------------
+if currentSystemHour > 9 and currentSystemHour < 17 then
+    mapTextureAssetId = "terrain-texture-day"
+else
+    mapTextureAssetId = "terrain-texture-night"
+end
 
 Level1 = {
     ----------------------------------------------------
@@ -49,7 +60,7 @@ Level1 = {
     -- table to define the map config variables
     ----------------------------------------------------
     map = {
-        textureAssetId = "terrain-texture-night",
+        textureAssetId = mapTextureAssetId,
         file = "./assets/tilemaps/jungle.map",
         scale = 2,
         tileSize = 32,
