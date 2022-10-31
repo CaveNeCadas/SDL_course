@@ -5,7 +5,7 @@
 #include "constants.hpp"
 #include "game.hpp"
 
-
+//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 int main ()
 {
     spdlog::info ("Welcome!!!.");

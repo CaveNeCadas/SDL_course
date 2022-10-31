@@ -13,14 +13,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (THE_APP_PROJECTS_OUTPUT ${CMAKE_CURRENT_SOURCE_DIR})
 set( SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
+set( SRC_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 set( INC_DIR $ENV{DEVLIB_INCLUDE} )
-
-
 
 #this will force all output under the folder of the curren  t project
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${THE_APP_PROJECTS_OUTPUT}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${THE_APP_PROJECTS_OUTPUT}/lib )
-
 
 
 set (AVX2SOURCE   ${SRC_DIR}/assetmanager.cpp
@@ -32,7 +30,7 @@ set (AVX2SOURCE   ${SRC_DIR}/assetmanager.cpp
                   ${SRC_DIR}/main.cpp
                   ${SRC_DIR}/map.cpp
                   ${SRC_DIR}/game.cpp
-                  )
+    )
 
 set (AVX2HEADER ${SRC_DIR}/animation.hpp
                 ${SRC_DIR}/assetmanager.hpp
@@ -60,6 +58,8 @@ add_executable(${PROJECT_NAME}  ${AVX2SOURCE}  ${AVX2HEADER} )
 target_include_directories( ${PROJECT_NAME}
                             PUBLIC     
                                 ${INC_DIR}
+                                ${SRC_INC_DIR}
+                                
                           )
 
 # define 
@@ -99,8 +99,9 @@ target_link_directories( ${PROJECT_NAME}
 
 target_link_libraries( ${PROJECT_NAME}
   $<$<BOOL:${WIN32}>:Shlwapi>
-  $<$<BOOL:${WIN32}>:lua>
+  $<$<BOOL:${WIN32}>:lua>  
   $<$<BOOL:${WIN32}>:SDL2>
   $<$<BOOL:${WIN32}>:SDL2_image>
   $<$<BOOL:${WIN32}>:SDL2_ttf>
+  # $<$<BOOL:${WIN32}>:dl>
 )
