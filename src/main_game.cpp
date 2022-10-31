@@ -1,12 +1,10 @@
 #include <iostream>
 #include <memory>
 #include "spdlog/spdlog.h"
-
 #include "constants.hpp"
 #include "game.hpp"
 
-//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
-int main ()
+int wmain ()
 {
     spdlog::info ("Welcome!!!.");
     spdlog::info ("Width {}. Height {}", WINDOW_WIDTH, WINDOW_HEIGHT );

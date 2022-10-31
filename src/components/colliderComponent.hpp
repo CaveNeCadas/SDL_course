@@ -57,7 +57,7 @@ class ColliderComponent : public Component
             #endif
         }
         
-        void update (float deltaTime) override
+        void update (float /*deltaTime*/) override
         {
             if (nullptr == m_transform)
             {
@@ -68,8 +68,8 @@ class ColliderComponent : public Component
                 m_src_rect = _mm_set_epi32 ( 0,0, m_transform->getWidth(), m_transform->getHeight() );
                 m_dst_rect = m_collider;
             #else
-                m_collider.x = m_transform->getPosition().x;
-                m_collider.y = m_transform->getPosition().y;
+                m_collider.x = static_cast<int> (m_transform->getPosition().x) ;
+                m_collider.y = static_cast<int> (m_transform->getPosition().y) ;
                 m_collider.w = m_transform->getWidth() * m_transform->getScale();
                 m_collider.h = m_transform->getHeight() * m_transform->getScale();
                 m_dst_rect.x = m_collider.x - Game::s_camera.x;
@@ -77,7 +77,7 @@ class ColliderComponent : public Component
             #endif
         } 
 
-        void render(  SDL_Renderer * a_renderer ) override
+        void render(  SDL_Renderer * /*a_renderer*/ ) override
         {
         }
 

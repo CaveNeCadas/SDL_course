@@ -10,7 +10,7 @@ class TextLabelComponent : public Component
     private:
         SDL_Rect m_position;
         std::string m_text;
-        TTF_Font* m_fontId;
+        //TTF_Font* m_fontId{nullptr};
         SDL_Color m_color;
         SDL_Texture* m_texture;
         SDL_Renderer* m_renderer;
@@ -31,10 +31,10 @@ class TextLabelComponent : public Component
         void initialize () override 
         {/*NOP*/}
         
-        void update (float deltaTime) override
+        void update (float /*deltaTime*/) override
         {/*NOP*/} 
 
-        void render(  SDL_Renderer * a_renderer ) override
+        void render(  SDL_Renderer * /*a_renderer*/ ) override
         {
                 FontManager::draw( m_texture, m_position, m_renderer);
         }

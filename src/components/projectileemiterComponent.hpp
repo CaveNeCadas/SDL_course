@@ -1,5 +1,4 @@
-#ifndef PROJECTILE_EMMITER_COMPONENT_OF_THE_GAME_HPP
-#define PROJECTILE_EMMITER_OF_THE_GAME_HPP
+#pragma once
 
 #include "graphicshdr.hpp"
 #include "component.hpp"
@@ -39,7 +38,7 @@ class ProjectileEmitterComponent : public Component
             }
         }
         
-        void update (float deltaTime) override
+        void update (float /*deltaTime*/) override
         {
            if (m_transform == nullptr)
                 return;
@@ -57,10 +56,9 @@ class ProjectileEmitterComponent : public Component
             }                  
         } 
 
-        void render(  SDL_Renderer * a_renderer ) override
+        void render(  SDL_Renderer *  /*a_renderer*/ ) override
         {/*NOP*/}
 
         
 };
 
-#endif

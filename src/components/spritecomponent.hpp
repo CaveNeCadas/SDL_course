@@ -85,7 +85,7 @@ class SpriteComponent : public Component
             m_src_rect.h = m_transformComponent->getHeight();
         }
         
-        void update (float deltaTime) override
+        void update (float /*deltaTime*/) override
         {
             if (nullptr == m_transformComponent)
             {

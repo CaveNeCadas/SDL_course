@@ -11,7 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set (THE_APP_PROJECTS_OUTPUT ${CMAKE_CURRENT_SOURCE_DIR})
+set( THE_APP_PROJECTS_OUTPUT ${CMAKE_CURRENT_SOURCE_DIR})
 set( SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 set( SRC_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 set( INC_DIR $ENV{DEVLIB_INCLUDE} )
@@ -20,17 +20,16 @@ set( INC_DIR $ENV{DEVLIB_INCLUDE} )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${THE_APP_PROJECTS_OUTPUT}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${THE_APP_PROJECTS_OUTPUT}/lib )
 
-
-set (AVX2SOURCE   ${SRC_DIR}/assetmanager.cpp
+set (AVX2SOURCE   ${SRC_DIR}/main_game.cpp
+                  ${SRC_DIR}/assetmanager.cpp
                   ${SRC_DIR}/collision.cpp
                   ${SRC_DIR}/entity.cpp
                   ${SRC_DIR}/entitymanager.cpp
                   ${SRC_DIR}/fontmanager.cpp
-                  ${SRC_DIR}/texturemanager.cpp
-                  ${SRC_DIR}/main.cpp
+                  ${SRC_DIR}/texturemanager.cpp                  
                   ${SRC_DIR}/map.cpp
                   ${SRC_DIR}/game.cpp
-    )
+)
 
 set (AVX2HEADER ${SRC_DIR}/animation.hpp
                 ${SRC_DIR}/assetmanager.hpp
@@ -84,13 +83,11 @@ set_target_properties (${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME}
                           PUBLIC
                           $<$<BOOL:${WIN32}>:_WIN32_WINNT=0x0601>
-                          $<$<BOOL:${WIN32}>:_UNICODE>
-                          $<$<BOOL:${WIN32}>:UNICODE>
+                          # $<$<BOOL:${WIN32}>:_UNICODE>
+                          # $<$<BOOL:${WIN32}>:UNICODE>
                           $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>
                           $<$<BOOL:${WIN32}>:NOMINMAX>                        
                         )
-
- 
 
 target_link_directories( ${PROJECT_NAME}  
                         PUBLIC  
@@ -98,10 +95,9 @@ target_link_directories( ${PROJECT_NAME}
                       )
 
 target_link_libraries( ${PROJECT_NAME}
-  $<$<BOOL:${WIN32}>:Shlwapi>
-  $<$<BOOL:${WIN32}>:lua>  
-  $<$<BOOL:${WIN32}>:SDL2>
-  $<$<BOOL:${WIN32}>:SDL2_image>
-  $<$<BOOL:${WIN32}>:SDL2_ttf>
-  # $<$<BOOL:${WIN32}>:dl>
+                    $<$<BOOL:${WIN32}>:Shlwapi>
+                    $<$<BOOL:${WIN32}>:lua>  
+                    $<$<BOOL:${WIN32}>:SDL2>
+                    $<$<BOOL:${WIN32}>:SDL2_image>
+                    $<$<BOOL:${WIN32}>:SDL2_ttf>
 )

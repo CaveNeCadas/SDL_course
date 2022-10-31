@@ -13,17 +13,15 @@ class KeyboardComponent : public Component
 {
     private:
 
+        TransformComponent* transform{nullptr};
+        SpriteComponent* sprite{nullptr};
+        SDL_Event* m_event{nullptr};
+
         std::string m_upKey;
         std::string m_downKey;
         std::string m_leftKey;
         std::string m_rightKey;
-
         std::string m_shootKey;
-
-        TransformComponent* transform;
-        SpriteComponent* sprite;
-        SDL_Event* m_event;
-
 
     public:
 
@@ -37,9 +35,9 @@ class KeyboardComponent : public Component
                          )
         : Component(owner)
         , m_event(event)
-        , m_upKey(   KeyboardComponent::getSDLKeyCodes ( upKey ))
-        , m_downKey( KeyboardComponent::getSDLKeyCodes (downKey))
-        , m_leftKey( KeyboardComponent::getSDLKeyCodes (leftKey))
+        , m_upKey   (KeyboardComponent::getSDLKeyCodes ( upKey ))
+        , m_downKey (KeyboardComponent::getSDLKeyCodes (downKey))
+        , m_leftKey (KeyboardComponent::getSDLKeyCodes (leftKey))
         , m_rightKey(KeyboardComponent::getSDLKeyCodes (rightKey))
         , m_shootKey(KeyboardComponent::getSDLKeyCodes (shootKey))
         {/*NOP*/}   
@@ -50,7 +48,7 @@ class KeyboardComponent : public Component
             sprite = m_owner->getComponent<SpriteComponent>();
         }
         
-         void update(float deltaTime) override {
+         void update(float /*deltaTime*/) override {
             if ( m_event->type == SDL_KEYDOWN) 
             {
                 std::string keyCode = std::to_string( m_event->key.keysym.sym);
@@ -99,7 +97,7 @@ class KeyboardComponent : public Component
             }           
         }
 
-        void render(  SDL_Renderer * a_renderer ) override
+        void render(  SDL_Renderer * /*a_renderer*/ ) override
         {
             
         }

@@ -33,6 +33,8 @@ Game::~Game()
 
 void Game::initialize(int32_t width, int32_t height)
 {
+    (void)width;
+    (void)height;
     if ( 0 != SDL_Init (SDL_INIT_EVERYTHING)  )
     {
         spdlog::critical ("Cannot initialize SDL");
@@ -274,7 +276,7 @@ void Game::loadLevel (int level)
             int32_t speed   = component_table["projectileEmitter"]["speed"];
             int32_t range   = component_table["projectileEmitter"]["range"];
             float angle     = component_table["projectileEmitter"]["angle"];
-            bool shouldLoop = component_table["projectileEmitter"]["shouldLoop"].get_or(false);
+            //bool shouldLoop = component_table["projectileEmitter"]["shouldLoop"].get_or(false);
             int32_t width   = component_table["projectileEmitter"]["width"].get_or(4);
             int32_t height  = component_table["projectileEmitter"]["height"].get_or(4);
             std::string textureAssetId = component_table["projectileEmitter"]["textureAssetId"].get_or(std::string("projectile-texture"));//hash();
@@ -331,8 +333,8 @@ void Game::handleCameraMovement()
     if (m_entityManager && nullptr != m_game_main_entity)
     {
         auto transform = m_game_main_entity->getComponent<TransformComponent>();
-        Game::s_camera.x = transform->getPosition().x - (WINDOW_WIDTH / 2);
-        Game::s_camera.y = transform->getPosition().y - (WINDOW_HEIGHT / 2); 
+        Game::s_camera.x = static_cast< decltype(Game::s_camera.x)  > ( transform->getPosition().x - (WINDOW_WIDTH / 2)  ) ;
+        Game::s_camera.y = static_cast< decltype(Game::s_camera.x)  > ( transform->getPosition().y - (WINDOW_HEIGHT / 2) ); 
 
         Game::s_camera.x = Game::s_camera.x < 0 ? 0 : Game::s_camera.x;
         Game::s_camera.y = Game::s_camera.y < 0 ? 0 : Game::s_camera.y;
