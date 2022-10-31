@@ -1,0 +1,3 @@
+D:/my_softs/SDL_course/build/CMakeFiles/sdl_2dgame.dir
+D:/my_softs/SDL_course/build/CMakeFiles/edit_cache.dir
+D:/my_softs/SDL_course/build/CMakeFiles/rebuild_cache.dir
