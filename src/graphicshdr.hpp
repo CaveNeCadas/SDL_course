@@ -1,5 +1,4 @@
-#ifndef GRAPHICS_HEADERS_OF_THE_GAME_HPP
-#define GRAPHICS_HEADERS_OF_THE_GAME_HPP
+#pragma once
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -7,4 +6,22 @@
 #include "glm/glm.hpp"
 #include "spdlog/spdlog.h"
 
+
+#ifdef GAME_AVX
+    #include <immintrin.h>
+    union rect_t
+    {
+        __m128i _sides;
+        int32_t _xywh[4];
+    };
+
+    union vec2_t
+    {
+        __m128 _coords;
+        float _xy[4];
+    };
+
+#else
+    using rect_t = SDL_Rect ;   
+    using vec2_t = glm::vec2;
 #endif

@@ -8,7 +8,9 @@
 class TextLabelComponent : public Component
 {
     private:
-        SDL_Rect m_position;
+
+
+        rect_t m_position;
         std::string m_text;
         //TTF_Font* m_fontId{nullptr};
         SDL_Color m_color;
@@ -18,7 +20,11 @@ class TextLabelComponent : public Component
 
         TextLabelComponent( Entity* owner, int x, int y, std::string text,TTF_Font* family, SDL_Color color, SDL_Renderer* arenderer)
         : Component(owner)
-        , m_position {x, y,0,0}
+         #ifdef GAME_AVX
+            , m_position{ ._coords = { _mm_set_epi32( x, y, 0, 0)}}
+         #else
+            , m_position {x, y,0,0}
+         #endif
         , m_text(std::move(text))
         , m_color(color)
         , m_texture{nullptr}

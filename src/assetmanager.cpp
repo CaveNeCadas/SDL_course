@@ -10,9 +10,7 @@ AssetManager::AssetManager ( Entitymanager* entmngr, SDL_Renderer * a_renderer)
 {/*nop*/}
 
 AssetManager::~AssetManager()
-{
-    
-}
+{/*NOP*/}
 
 void AssetManager::clear()
 {

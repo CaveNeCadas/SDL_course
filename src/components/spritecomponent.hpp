@@ -15,8 +15,8 @@ class SpriteComponent : public Component
     private:
     TransformComponent* m_transformComponent;
         SDL_Texture * m_texture;
-        SDL_Rect m_src_rect;
-        SDL_Rect m_dst_rect;
+        rect_t m_src_rect;
+        rect_t m_dst_rect;
         SDL_RendererFlip m_flip;
 
         bool m_isAnimated;
@@ -39,8 +39,14 @@ class SpriteComponent : public Component
         : Component(owner)
         , m_transformComponent{nullptr}
         , m_texture( texture )
-        , m_src_rect{0,0,0,0}
-        , m_dst_rect{0,0,0,0}
+
+         #ifdef GAME_AVX
+            , m_src_rect{ ._side = { _mm_set1_epi32(0)}}
+            , m_dst_rect{ ._side = { _mm_set1_epi32(0)}}
+         #else
+            , m_src_rect{0,0,0,0}
+            , m_dst_rect{0,0,0,0}
+         #endif           
         , m_flip{SDL_FLIP_NONE}
         , m_isAnimated{ speed > 0}
         , m_num_frame{ numframe }
@@ -79,10 +85,14 @@ class SpriteComponent : public Component
                 return;
             }
             m_transformComponent = m_owner->getComponent<TransformComponent>();
-            m_src_rect.x = 0;
-            m_src_rect.y = 0;
-            m_src_rect.w = m_transformComponent->getWidth();
-            m_src_rect.h = m_transformComponent->getHeight();
+            #ifdef GAME_AVX
+                m_src_rect._sides = _mm_set_epi32( 0,0, m_transformComponent->getWidth(),m_transformComponent->getHeight() ) ;
+            #else
+                m_src_rect.x = 0;
+                m_src_rect.y = 0;
+                m_src_rect.w = m_transformComponent->getWidth();
+                m_src_rect.h = m_transformComponent->getHeight();
+            #endif
         }
         
         void update (float /*deltaTime*/) override
@@ -93,13 +103,29 @@ class SpriteComponent : public Component
             }
             if (m_isAnimated)
             {
-                m_src_rect.x = m_src_rect.w * static_cast<int>((SDL_GetTicks() / m_animation_speed) % m_num_frame);                
+                #ifdef GAME_AVX
+                    m_src_rect._xywh[0] = m_src_rect._xywh[2] * static_cast<int>((SDL_GetTicks() / m_animation_speed) % m_num_frame);                
+                #else
+                    m_src_rect.x = m_src_rect.w * static_cast<int>((SDL_GetTicks() / m_animation_speed) % m_num_frame);                
+                #endif
             }
-            m_src_rect.y =  m_animation_index * m_transformComponent->getHeight();
-            m_dst_rect.x = static_cast<int>( m_transformComponent->getPosition().x ) - (m_isfixed? 0 : Game::s_camera.x);
-            m_dst_rect.y = static_cast<int>( m_transformComponent->getPosition().y ) - (m_isfixed? 0 : Game::s_camera.y);
-            m_dst_rect.w = m_transformComponent->getWidth() * m_transformComponent->getScale();
-            m_dst_rect.h = m_transformComponent->getHeight()* m_transformComponent->getScale();        
+      
+            #ifdef GAME_AVX                
+                m_src_rect._xywh[1] =  m_animation_index * m_transformComponent->getHeight();
+                auto const vec_is_fixed = _mm_mul_epi32( Game::s_camera, _mm_set_epi32(static_cast<int32_t>(m_isfixed)));
+                auto const vec_xy_cam = _mm_sub_epi32( _mm_castps_si128 (m_transformComponent->getPosition()), vec_is_fixed );
+                auto const vec_wh_ = m_transformComponent->getWidthHeightScaled();
+                m_dst_rect._sides = _mm_blend_epi32(vec_xy_cam,  vec_wh_, 0b1100);
+
+            #else
+                m_src_rect.y =  m_animation_index * m_transformComponent->getHeight();
+                m_dst_rect.x = static_cast<int>( m_transformComponent->getPosition().x ) - (m_isfixed? 0 : Game::s_camera.x);
+                m_dst_rect.y = static_cast<int>( m_transformComponent->getPosition().y ) - (m_isfixed? 0 : Game::s_camera.y);
+                m_dst_rect.w = m_transformComponent->getWidth() * m_transformComponent->getScale();
+                m_dst_rect.h = m_transformComponent->getHeight()* m_transformComponent->getScale();        
+            #endif
+
+      
         } 
 
         void render(  SDL_Renderer * a_renderer ) override

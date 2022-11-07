@@ -65,7 +65,7 @@ Entity* Entitymanager::addEntity( uint32_t entId, LayerType layer )
 
 Entity* Entitymanager::find( uint32_t entId  )
 {
-    auto ent_itr =  std::find_if ( std::begin(m_entities), std::end(m_entities), [this, entId](auto & ptr) { return ptr->getId() == entId;} );
+    auto ent_itr =  std::find_if ( std::begin(m_entities), std::end(m_entities), [entId](auto & ptr) { return ptr->getId() == entId;} );
     if (  ent_itr != m_entities.end() )
     {
             return ent_itr->get();

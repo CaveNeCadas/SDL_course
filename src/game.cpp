@@ -12,7 +12,13 @@ using entity_player_id_t    = std::integral_constant<uint32_t, hash("main_player
 using entity_tank_id_t      = std::integral_constant<uint32_t, hash("tank_enemy")>;
 using entity_radar_id_t     = std::integral_constant<uint32_t, hash("radar_game")>;
 
-SDL_Rect  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
+#ifdef GAME_AVX
+    rect_t  Game::s_camera{ ._sides=_mm_set_epi32(0,0,WINDOW_WIDTH,WINDOW_HEIGHT) };
+#else
+    rect_t  Game::s_camera{0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
+#endif
+
+
 
  Game::Game ()
 : m_isrunning{false}
@@ -335,6 +341,8 @@ void Game::handleCameraMovement()
 {
     if (m_entityManager && nullptr != m_game_main_entity)
     {
+       #ifdef GAME_AVX
+       #else
         auto transform = m_game_main_entity->getComponent<TransformComponent>();
         Game::s_camera.x = static_cast< decltype(Game::s_camera.x)  > ( transform->getPosition().x - (WINDOW_WIDTH / 2)  ) ;
         Game::s_camera.y = static_cast< decltype(Game::s_camera.x)  > ( transform->getPosition().y - (WINDOW_HEIGHT / 2) ); 
@@ -344,5 +352,7 @@ void Game::handleCameraMovement()
         
         Game::s_camera.x = Game::s_camera.x > Game::s_camera.w ? Game::s_camera.w : Game::s_camera.x;
         Game::s_camera.y = Game::s_camera.y > Game::s_camera.h ? Game::s_camera.h : Game::s_camera.y;
+
+       #endif 
     }
 }

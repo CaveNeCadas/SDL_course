@@ -9,33 +9,29 @@
 #include "game.hpp"
 
 
-#ifdef GAME_AVX
-    using Rect_t = __m128i;
-#else
-    using Rect_t = SDL_Rect ;   
-#endif
+
 
 class ColliderComponent : public Component
 {
     private:
         std::string m_tag;
-        Rect_t m_collider;
-        Rect_t m_src_rect;
-        Rect_t m_dst_rect;
+        rect_t m_collider;
+        rect_t m_src_rect;
+        rect_t m_dst_rect;
         TransformComponent* m_transform;
     public:
 
-        ColliderComponent( Entity* owner,std::string tag, int x, int y, int w, int h)
+        ColliderComponent( Entity* owner,std::string tag, int32_t x, int32_t y, int32_t w, int32_t h)
         : Component(owner)
         , m_tag(std::move(tag))
         #ifdef GAME_AVX
-        , m_collider (_mm_setzero_si128 ())
-        , m_src_rect (_mm_setzero_si128 ()))
-        , m_dst_rect (_mm_setzero_si128 ())
+            , m_collider (_mm_set_pd( x, y, w, h ))
+            , m_src_rect (_mm_setzero_pd()))
+            , m_dst_rect (_mm_setzero_pd())
         #else
-        , m_collider{ x, y, w, h}
-        , m_src_rect{0,0,0,0}
-        , m_dst_rect{0,0,0,0}
+            , m_collider{ x, y, w, h}
+            , m_src_rect{0,0,0,0}
+            , m_dst_rect{0,0,0,0}
         #endif
         , m_transform{nullptr}
         {/*NOP*/}   
@@ -68,8 +64,8 @@ class ColliderComponent : public Component
                 m_src_rect = _mm_set_epi32 ( 0,0, m_transform->getWidth(), m_transform->getHeight() );
                 m_dst_rect = m_collider;
             #else
-                m_collider.x = static_cast<int> (m_transform->getPosition().x) ;
-                m_collider.y = static_cast<int> (m_transform->getPosition().y) ;
+                m_collider.x = static_cast<int32_t> (m_transform->getPosition().x) ;
+                m_collider.y = static_cast<int32_t> (m_transform->getPosition().y) ;
                 m_collider.w = m_transform->getWidth() * m_transform->getScale();
                 m_collider.h = m_transform->getHeight() * m_transform->getScale();
                 m_dst_rect.x = m_collider.x - Game::s_camera.x;

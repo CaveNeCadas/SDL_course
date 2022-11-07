@@ -38,8 +38,8 @@ class Game
         SDL_Renderer * m_renderer;
         SDL_Event m_event;
 
-        glm::vec2 projectilePosition;
-        glm::vec2 projectileVelocity;
+        vec2_t projectilePosition;
+        vec2_t projectileVelocity;
         uint32_t ticklastframe;
 
         std::unique_ptr < Entitymanager > m_entityManager; 
@@ -50,8 +50,9 @@ class Game
 
 
     public:
-    
-	static SDL_Rect s_camera;
+
+        static rect_t s_camera;
+        
 };
 
 using game_ptr = std::unique_ptr<Game>;

@@ -9,7 +9,9 @@ class ProjectileEmitterComponent : public Component
 {
     private:
         TransformComponent* m_transform;
-        glm::vec2 m_origin;
+        
+        
+        vec2_t m_origin;
         int32_t m_speed;
         int32_t m_range;
         float   m_angle;
@@ -19,7 +21,13 @@ class ProjectileEmitterComponent : public Component
         ProjectileEmitterComponent( Entity* owner,  int speed, float angle, int rg,  bool loop)
         : Component(owner)
         , m_transform{nullptr}
-        , m_origin(0, 0)
+
+        #ifdef GAME_AVX
+            , m_origin{ ._coords = { _mm_set1_epi32(0)}}
+         #else
+            , m_origin(0, 0)
+         #endif   
+        
         , m_speed(speed)
         , m_range(rg)
         , m_angle( glm::radians(angle) )
