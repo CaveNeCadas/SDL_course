@@ -15,6 +15,8 @@ int wmain ()
 
     game -> loadLevel(1);
     
+    spdlog::info ("load level 1");
+
     while (game->isRunning())
     {
         game -> processInput();

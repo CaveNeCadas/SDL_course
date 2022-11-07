@@ -33,8 +33,9 @@ Game::~Game()
 
 void Game::initialize(int32_t width, int32_t height)
 {
-    (void)width;
-    (void)height;
+
+    spdlog::info ("initialize...");
+
     if ( 0 != SDL_Init (SDL_INIT_EVERYTHING)  )
     {
         spdlog::critical ("Cannot initialize SDL");
@@ -45,13 +46,14 @@ void Game::initialize(int32_t width, int32_t height)
         spdlog::critical ("Cannot initialize TTF");
         return;
     }
+    spdlog::info ("SDL_CreateWindow...");
     // SDL_Window* SDL_CreateWindow(const char* title,
     //                              int         x,
     //                              int         y,
     //                              int         w,
     //                              int         h,
     //                              Uint32      flags)
-    m_mainWindow = SDL_CreateWindow ( "my Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_BORDERLESS );
+    m_mainWindow = SDL_CreateWindow ( "my Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_BORDERLESS );
 
    if ( nullptr == m_mainWindow )
     {
@@ -60,6 +62,7 @@ void Game::initialize(int32_t width, int32_t height)
     }
 
     m_renderer = SDL_CreateRenderer (m_mainWindow, -1,0 );
+    spdlog::info ("SDL_CreateRenderer...");
 
     if ( nullptr == m_renderer )
     {

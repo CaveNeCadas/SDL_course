@@ -28,10 +28,10 @@ class TileComponent : public Component
         void initialize () override 
         {/*NOP*/}
         
-        void update (float deltaTime) override
+        void update (float /*deltaTime*/) override
         {
-                 m_dst_rect.x = m_position.x - Game::s_camera.x;
-                 m_dst_rect.y = m_position.y - Game::s_camera.y;       
+            m_dst_rect.x = static_cast<decltype(SDL_Rect::x)> (m_position.x - Game::s_camera.x);
+            m_dst_rect.y = static_cast<decltype(SDL_Rect::y)> (m_position.y - Game::s_camera.y);
         } 
 
         void render(  SDL_Renderer * a_renderer ) override
