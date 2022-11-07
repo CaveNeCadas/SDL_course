@@ -48,7 +48,8 @@ class KeyboardComponent : public Component
             sprite = m_owner->getComponent<SpriteComponent>();
         }
         
-         void update(float /*deltaTime*/) override {
+         void update(float /*deltaTime*/) override 
+         {
             if ( m_event->type == SDL_KEYDOWN) 
             {
                 std::string keyCode = std::to_string( m_event->key.keysym.sym);
@@ -106,11 +107,11 @@ class KeyboardComponent : public Component
 
         static std::string getSDLKeyCodes (std::string const & key)
         {
-            if (key.compare("up") == 0) return "1073741906";
-            if (key.compare("down") == 0) return "1073741905";
-            if (key.compare("left") == 0) return "1073741904";
-            if (key.compare("right") == 0) return "1073741903";
-            if (key.compare("space") == 0) return "32"; 
+            if (key.compare("up") == 0) return SDL_GetKeyName (SDLK_w);
+            if (key.compare("down") == 0) return SDL_GetKeyName (SDLK_s);
+            if (key.compare("left") == 0) return SDL_GetKeyName (SDLK_a);
+            if (key.compare("right") == 0) return SDL_GetKeyName (SDLK_d);
+            if (key.compare("space") == 0) return SDL_GetKeyName (SDLK_SPACE); 
             return std::to_string(static_cast<int>(key[0]));
 
         }     
