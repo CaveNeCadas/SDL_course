@@ -15,6 +15,7 @@ set( THE_APP_PROJECTS_OUTPUT ${CMAKE_CURRENT_SOURCE_DIR})
 set( SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 set( SRC_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 set( INC_DIR $ENV{DEVLIB_INCLUDE} )
+message( "INCLUDE : " $ENV{DEVLIB_INCLUDE})
 
 #this will force all output under the folder of the curren  t project
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${THE_APP_PROJECTS_OUTPUT}/bin )
@@ -57,12 +58,15 @@ add_executable(${PROJECT_NAME}  ${AVX2SOURCE}  ${AVX2HEADER} )
 target_include_directories( ${PROJECT_NAME}
                             PUBLIC     
                                 ${INC_DIR}
-                                ${SRC_INC_DIR}
-                                
+                                ${SRC_INC_DIR}                                
                           )
 
 # define 
-target_compile_definitions(  ${PROJECT_NAME} PUBLIC  _USE_MATH_DEFINES )                          
+target_compile_definitions(  ${PROJECT_NAME} 
+                          PUBLIC  
+                            _USE_MATH_DEFINES
+                            $<$<BOOL:${WIN32}>:_GAME_WIN32>
+                            )
 
 target_compile_options(${PROJECT_NAME} 
                                PUBLIC
@@ -95,9 +99,15 @@ target_link_directories( ${PROJECT_NAME}
                       )
 
 target_link_libraries( ${PROJECT_NAME}
-                    $<$<BOOL:${WIN32}>:Shlwapi>
-                    $<$<BOOL:${WIN32}>:lua>  
-                    $<$<BOOL:${WIN32}>:SDL2>
-                    $<$<BOOL:${WIN32}>:SDL2_image>
-                    $<$<BOOL:${WIN32}>:SDL2_ttf>
-)
+                      $<$<BOOL:${WIN32}>:Shlwapi>
+                      $<$<BOOL:${WIN32}>:lua>  
+                      $<$<BOOL:${WIN32}>:SDL2>
+                      $<$<BOOL:${WIN32}>:SDL2_image>
+                      $<$<BOOL:${WIN32}>:SDL2_ttf>
+                      #if LINUX
+                      $<$<BOOL:${UNIX}>:lua>  
+                      $<$<BOOL:${UNIX}>:dl>  
+                      $<$<BOOL:${UNIX}>:SDL2>
+                      $<$<BOOL:${UNIX}>:SDL2_image>
+                      $<$<BOOL:${UNIX}>:SDL2_ttf>
+                    )

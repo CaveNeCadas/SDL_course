@@ -4,7 +4,13 @@
 #include "constants.hpp"
 #include "game.hpp"
 
-int wmain ()
+#if defined (_GAME_WIN32)
+    #define entry_point wmain
+#else
+    #define entry_point main
+#endif
+
+int entry_point()
 {
     spdlog::info ("Welcome!!!.");
     spdlog::info ("Width {}. Height {}", WINDOW_WIDTH, WINDOW_HEIGHT );
